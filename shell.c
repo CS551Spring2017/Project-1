@@ -566,6 +566,7 @@ struct job_t *getjobpid(struct job_t *jobs, pid_t pid) {
 /* getjobjid  - Find a job (by JID) on the job list */
 struct job_t *getjobjid(struct job_t *jobs, int jid) 
 {
+<<<<<<< HEAD
     int i;
 
     if (jid < 1)
@@ -669,6 +670,9 @@ handler_t *Signal(int signum, handler_t *handler)
     if (sigaction(signum, &action, &old_action) < 0)
 	unix_error("Signal error");
     return (old_action.sa_handler);
+=======
+	printf("Blah!\n");
+>>>>>>> 75ae7cffd5c461b6085de57fc67673ee6ffcd6ce
 }
 
 /*
