@@ -1,6 +1,14 @@
-/* 
- * tsh - A tiny shell program with job control
+/*
+ * CS551 - Project 1 - Shell
+ * --
+ * Team Members:
+ *   John Paul Aldana
+ *   Randal Kwok
+ *   Sufyan Menk
+ * --
+ * Based off CS351: tsh - A tiny shell program with job control
  */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -110,9 +118,9 @@ int main(int argc, char **argv)
         case 'p':             /* don't print a prompt */
             emit_prompt = 0;  /* handy for automatic testing */
 	    break;
-	default:
-            usage();
-	}
+		default:
+				usage();
+		}
     }
 
     /* Install the signal handlers */
@@ -147,7 +155,7 @@ int main(int argc, char **argv)
 	/* Evaluate the command line */
 	eval(cmdline);
 	fflush(stdout);
-	fflush(stdout);
+	fflush(stdout); /* why is there two? */
     } 
 
     exit(0); /* control never reaches here */
@@ -566,7 +574,6 @@ struct job_t *getjobpid(struct job_t *jobs, pid_t pid) {
 /* getjobjid  - Find a job (by JID) on the job list */
 struct job_t *getjobjid(struct job_t *jobs, int jid) 
 {
-<<<<<<< HEAD
     int i;
 
     if (jid < 1)
@@ -670,9 +677,8 @@ handler_t *Signal(int signum, handler_t *handler)
     if (sigaction(signum, &action, &old_action) < 0)
 	unix_error("Signal error");
     return (old_action.sa_handler);
-=======
+	
 	printf("Blah!\n");
->>>>>>> 75ae7cffd5c461b6085de57fc67673ee6ffcd6ce
 }
 
 /*
