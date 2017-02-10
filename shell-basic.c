@@ -27,7 +27,7 @@ int main()
 	while (1)
 	{
 		printf("shell> ");
-		parseline(buffer, bufsize);
+		parseline(&buffer, &bufsize);
 	}
 }
 
