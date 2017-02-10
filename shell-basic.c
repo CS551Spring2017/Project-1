@@ -34,6 +34,15 @@ int parseline()
 		perror("Unable to allocate buffer");
 		exit(1);
 	}
+	
+	// test
+	char c;
+	while (1)
+	{
+		c = getchar();
+		printf("Char: %c\n", c);
+	}
+	
 	characters = getline(&buffer, &bufsize, stdin);
 	
 	size_t len = strlen(buffer);
