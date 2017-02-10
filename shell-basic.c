@@ -151,7 +151,7 @@ int shell_sequence(char *cmd)
 }
 
 int shell_parallel(char *cmd)
-	// only allow '(' with matching ')'
+{
 	
 	return 1;
 }
