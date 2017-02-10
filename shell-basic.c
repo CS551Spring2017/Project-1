@@ -129,10 +129,8 @@ int shell_process(char *arg)
 	int i;
 	
 	wordexp(arg, &p, 0);
-	w = p.we_wordv;
-	printf("v: %s\n", w);
-	w = p.we_wordc;
-	printf("c: %s\n", w);
+	printf("v: %s\n", p.we_wordv);
+	printf("c: %s\n", p.we_wordc);
 	
 	return 1;
 }
