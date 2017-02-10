@@ -10,16 +10,25 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <curses.h>
 
 int parseline();
 
 int main()
 {
+	initscr();
+	timeout(-1);
+	int c = getch();
+	endwin();
+	printf("%d %c\n", c, c);
+	return 0;
+	/*
 	while (1)
 	{
 		printf("shell> ");
 		parseline();
 	}
+	*/
 }
 
 int parseline()
