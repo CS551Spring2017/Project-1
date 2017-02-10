@@ -83,16 +83,16 @@ int parseline()
 				i--;
 			}
 		}
-		/*else if (c == '\z' || c == '\x' || c == '\c') // ctrl+(z/x/c)
+		else if (c == 26 || c == 24 || c == 3 || c == 4) // ctrl + (26=z, 24=x, 3=c, 4=d)
 		{
-			printf("\r\nkeyboard interrupt?\n");
+			printf("\r\nkeyboard interrupt!\n");
 			
 			system("/bin/stty cooked"); // enable input buffers
 			printf("\r\n");
 			exit(1);
-		}*/
+		}
 		else {
-			printf("%c,%d\n", c, c);
+			printf("%c", c);
 			buffer[i++] = c;
 		}
 	}
