@@ -59,10 +59,11 @@ int parseline()
 	while (!ready)
 	{
 		c = getchar();
-		if (c == '\n' || c == '\t')
+		if (c == '\r' || c == '\n' || c == '\t')
 		{
 			ready = 1;
 			buffer[++i] = '\0';
+			system("key called!");
 		}
 		else if (c == '.') { // emergency exit
 			system("/bin/stty cooked"); // enable input buffers
