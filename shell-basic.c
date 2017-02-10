@@ -65,7 +65,7 @@ int parseline()
 			buffer[i++] = '\0';
 		}
 		else {
-			printf("%c", c);
+			printf(" %c", c);
 			buffer[i++] = c;
 		}
 	}
