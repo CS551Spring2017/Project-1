@@ -64,6 +64,10 @@ int parseline()
 			ready = 1;
 			buffer[i++] = '\0';
 		}
+		else if (c == '.') { // emergency exit
+			system("/bin/stty cooked"); // enable input buffers
+			exit(1);
+		}
 		else {
 			printf(" %c", c);
 			buffer[i++] = c;
