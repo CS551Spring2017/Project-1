@@ -14,10 +14,12 @@
 static char *prompt = "shell> ";
 static char done = 0;
 
+/*
 struct shell_cmd {
 	char *cmd[];
 	
 };
+*/
 
 int parseline();
 int shell_process(char *arg);
