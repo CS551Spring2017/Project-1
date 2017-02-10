@@ -15,8 +15,10 @@ static char *prompt = "shell> ";
 static char done = 0;
 
 int parseline();
-int shell_proc(char *arg);
+int shell_process(char *arg);
 int verify_parenthesis_count(char *cmd);
+int shell_sequence(char *cmd);
+int shell_parallel(char *cmd);
 
 int main()
 {
@@ -84,19 +86,26 @@ int parseline()
 	size_t len = strlen(buffer);
 	printf(" [I='%s'] [%d chars]\n", buffer, len);
 	
-	shell_proc(buffer);
+	shell_process(buffer);
 	
 	return 1;
 }
 
-int shell_proc(char *arg)
+int shell_process(char *arg)
 {
 	// do stuff
 	// cmd1
+	// cmd1 -v
 	// cmd1;cmd2
+	// cmd1;cmd2;cmd3
 	// cmd1&cmd2
 	// (cmd1;cmd2)&(cmd1;cmd2)
-	printf("pointer test: %s\n", arg);
+	// cmd1 -f
+	// cmd1 -f;cmd -2
+	// printf("pointer test: %s\n", arg);
+	
+	int p_count = verify_parenthesis_count(arg);
+	printf("return: %d\n", p_count);
 	
 	return 1;
 }
@@ -104,4 +113,44 @@ int shell_proc(char *arg)
 int verify_parenthesis_count(char *cmd)
 {
 	// only allow '(' with matching ')'
+	int left = 0;
+	int right = 0;
+	int i = 0;
+	int left_mod = 0;
+	for (i = 0; i <= strlen(cmd); i++)
+	{
+		if (cmd[i] == '(')
+		{
+			left++;
+			left_mod++;
+		}
+		else if (cmd[i] == ')')
+		{
+			if (left_mod <= 0)
+			{
+				perror("Mismatched parenthesis (invalid close).");
+				return 0;
+			}
+			right++;
+			left_mod--;
+		}
+	}
+	if (left == right) return 1;
+	
+	perror("Mismatched parenthesis (unequal number).");
+	return 0;
+}
+
+int shell_sequence(char *cmd)
+{
+	// only allow '(' with matching ')'
+	
+	return 1;
+}
+
+int shell_parallel(char *cmd)
+{
+	// only allow '(' with matching ')'
+	
+	return 1;
 }
