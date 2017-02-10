@@ -146,7 +146,7 @@ int verify_parenthesis_count(char *cmd)
 
 int shell_sequence(char *cmd)
 {
-	
+	printf("You entered the sequence function\n");
 	return 1;
 }
 
