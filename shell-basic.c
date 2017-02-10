@@ -10,6 +10,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <signal.h>
+#include <errno.h>
 
 static char *prompt = "shell> ";
 static char done = 0;				// for ctrl+c/ctrl+d handling
@@ -35,6 +37,8 @@ int main()
 		printf(prompt);
 		parseline();
 	}
+	
+	return 0;
 }
 
 int parseline()
