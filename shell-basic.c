@@ -33,9 +33,14 @@ int parseline()
 		perror("Unable to allocate buffer");
 		exit(1);
 	}
-	characters = getline(&buffer,&bufsize,stdin);
-	printf("%zu characters were read.\n",characters);
-	printf("You typed: '%s'\n",buffer);
+	characters = getline(&buffer, &bufsize, stdin);
+	
+	size_t len = strlen(characters);
+	if (len > 0 && characters[len - 1] == '\n')
+	{
+		characters[--len] = '\0';
+	}
+	printf("[I='%s'] [%zu chars]\n", buffer, characters);
 	
 	return 1;
 }
