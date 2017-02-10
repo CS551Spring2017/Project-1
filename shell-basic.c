@@ -99,13 +99,16 @@ int shell_process(char *arg)
 	// cmd1;cmd2
 	// cmd1;cmd2;cmd3
 	// cmd1&cmd2
+	// cmd1&(cmd2;cmd3)
 	// (cmd1;cmd2)&(cmd1;cmd2)
 	// cmd1 -f
 	// cmd1 -f;cmd -2
 	// printf("pointer test: %s\n", arg);
 	
 	int p_count = verify_parenthesis_count(arg);
-	printf("return: %d\n", p_count);
+	if (!p_count) return 0;
+	
+	
 	
 	return 1;
 }
@@ -116,7 +119,7 @@ int verify_parenthesis_count(char *cmd)
 	int left = 0;
 	int right = 0;
 	int i = 0;
-	int left_mod = 0;
+	int left_mod = 0;	// ) should always be after a (
 	for (i = 0; i <= strlen(cmd); i++)
 	{
 		if (cmd[i] == '(')
@@ -143,13 +146,11 @@ int verify_parenthesis_count(char *cmd)
 
 int shell_sequence(char *cmd)
 {
-	// only allow '(' with matching ')'
 	
 	return 1;
 }
 
 int shell_parallel(char *cmd)
-{
 	// only allow '(' with matching ')'
 	
 	return 1;
