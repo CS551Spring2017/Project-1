@@ -62,24 +62,20 @@ int parseline()
 		if (c == '\n' || c == '\t')
 		{
 			ready = 1;
-			buffer[i++] = '\0';
+			buffer[++i] = '\0';
 		}
 		else if (c == '.') { // emergency exit
 			system("/bin/stty cooked"); // enable input buffers
 			exit(1);
 		}
 		else {
-			printf(" %c", c);
-			buffer[i++] = c;
+			printf("%c", c);
+			buffer[++i] = c;
 		}
 	}
 	system("/bin/stty cooked"); // enable input buffers
 	
 	size_t len = strlen(buffer);
-	if (len > 0 && buffer[len - 1] == '\n')
-	{
-		buffer[--len] = '\0';
-	}
 	printf("[I='%s'] [%d chars]\n", buffer, len);
 
 	/*
