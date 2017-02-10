@@ -10,27 +10,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <signal.h>
-#include <errno.h>
 
 static char *prompt = "shell> ";
-static char done = 0;				// for ctrl+c/ctrl+d handling
-static void sigHandler(int signum)
-{
-	printf("\n"); // exit into new line
-	done = 1;
-}
+static char done = 0;
 
 int parseline();
 
 int main()
-{	
-	struct sigaction sa;
-	memset(&sa, 0, sizeof(struct sigaction));
-	sa.sa_handler = sigHandler;
-	sa.sa_flags = 0;
-	sigaction(SIGINT, &sa, NULL);
-	sigaction(SIGTERM, &sa, NULL);
+{
 	
 	while (!done)
 	{
@@ -69,10 +56,11 @@ int parseline()
 		else if (c == '\t') // 'tab' pressed
 		{
 			printf("\r\nSuggested: cmd1\r\n           cmd1 -l\r\n           cmd1 -l -h\r\n"); //sample
-			printf("%s %s", prompt, buffer);
+			printf("%s%s", prompt, buffer);
 		}
 		else if (c == '.') { // emergency exit
 			system("/bin/stty cooked"); // enable input buffers
+			printf("\r\n");
 			exit(1);
 		}
 		else {
