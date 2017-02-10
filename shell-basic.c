@@ -86,10 +86,11 @@ int parseline()
 			printf("\r\nkeyboard interrupt?\n");
 			
 			system("/bin/stty cooked"); // enable input buffers
+			printf("\r\n");
 			exit(1);
 		}*/
 		else {
-			printf("%c|%d\n", c,c);
+			printf("%c", c);
 			buffer[i++] = c;
 		}
 	}
