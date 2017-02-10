@@ -14,6 +14,11 @@
 static char *prompt = "shell> ";
 static char done = 0;
 
+struct shell_cmd {
+	char *cmd[];
+	
+};
+
 int parseline();
 int shell_process(char *arg);
 int verify_parenthesis_count(char *cmd);
@@ -75,6 +80,13 @@ int parseline()
 				printf("\b \b"); // replace char with a space
 				i--;
 			}
+		}
+		else if (c == '\z' || c == '\x' || c == '\c') // ctrl+(z/x/c)
+		{
+			printf("\r\nkeyboard interrupt?\n");
+			
+			system("/bin/stty cooked"); // enable input buffers
+			exit(1);
 		}
 		else {
 			printf("%c", c);
