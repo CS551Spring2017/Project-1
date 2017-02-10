@@ -34,7 +34,7 @@ int main()
 	
 	while (!done)
 	{
-		printf(prompt);
+		printf("%s", prompt);
 		parseline();
 	}
 	
