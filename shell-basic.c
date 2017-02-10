@@ -10,13 +10,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <wordexp.h>
 
 static char *prompt = "shell> ";
 static char done = 0;
 
 /*
 struct shell_cmd {
-	char *cmd[];
+	char *cmd;
 	
 };
 */
@@ -123,7 +124,15 @@ int shell_process(char *arg)
 	int p_count = verify_parenthesis_count(arg);
 	if (!p_count) return 0;
 	
+	wordexp_t p;
+	char **w;
+	int i;
 	
+	wordexp(arg, &p, 0);
+	w = p.we_wordv;
+	printf("v: %s\n", w);
+	w = p.we_wordc;
+	printf("c: %s\n", w);
 	
 	return 1;
 }
