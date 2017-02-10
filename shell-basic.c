@@ -11,13 +11,28 @@
 #include <stdlib.h>
 #include <string.h>
 
+static char *prompt = "shell> ";
+static char done = 0;				// for ctrl+c/ctrl+d handling
+static void sigHandler(int signum)
+{
+	printf("\n"); // exit into new line
+	done = 1;
+}
+
 int parseline();
 
 int main()
 {	
-	while (1)
+	struct sigaction sa;
+	memset(&sa, 0, sizeof(struct sigaction));
+	sa.sa_handler = sigHandler;
+	sa.sa_flags = 0;
+	sigaction(SIGINT, &sa, NULL);
+	sigaction(SIGTERM, &sa, NULL);
+	
+	while (!done)
 	{
-		printf("shell> ");
+		printf(prompt);
 		parseline();
 	}
 }
@@ -50,7 +65,7 @@ int parseline()
 		else if (c == '\t') // 'tab' pressed
 		{
 			printf("\r\nSuggested: cmd1\r\n           cmd1 -l\r\n           cmd1 -l -h\r\n"); //sample
-			printf("Shell> %s", buffer);
+			printf("%s %s", prompt, buffer);
 		}
 		else if (c == '.') { // emergency exit
 			system("/bin/stty cooked"); // enable input buffers
@@ -64,7 +79,7 @@ int parseline()
 	system("/bin/stty cooked"); // enable input buffers
 	
 	size_t len = strlen(buffer);
-	printf("[I='%s'] [%d chars]\n", buffer, len);
+	printf(" [I='%s'] [%d chars]\n", buffer, len);
 
 	/*
 	buffer = (char *)malloc(bufsize * sizeof(char));
