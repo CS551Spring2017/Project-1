@@ -45,7 +45,7 @@ int parseline()
 		if (c == '\r' || c == '\n' || c == '\t')
 		{
 			ready = 1;
-			buffer[++i] = '\0';
+			buffer[i++] = '\0';
 			system("key called!");
 		}
 		else if (c == '.') { // emergency exit
@@ -54,7 +54,7 @@ int parseline()
 		}
 		else {
 			printf("%c", c);
-			buffer[++i] = c;
+			buffer[i++] = c;
 		}
 	}
 	system("/bin/stty cooked"); // enable input buffers
