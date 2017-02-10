@@ -49,7 +49,7 @@ int parseline()
 		}
 		else if (c == '\t') // 'tab' pressed
 		{
-			printf("\nSuggested: cmd1\n           cmd1 -l\n           cmd1 -l -h\n"); //sample
+			printf("\r\nSuggested: cmd1\r\n           cmd1 -l\r\n           cmd1 -l -h\r\n"); //sample
 			printf("Shell> %s", buffer);
 		}
 		else if (c == '.') { // emergency exit
