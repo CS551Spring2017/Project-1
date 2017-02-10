@@ -16,6 +16,7 @@ static char done = 0;
 
 int parseline();
 int shell_proc(char *arg);
+int verify_parenthesis_count(char *cmd);
 
 int main()
 {
@@ -59,10 +60,19 @@ int parseline()
 			printf("\r\nSuggested: cmd1\r\n           cmd1 -l\r\n           cmd1 -l -h\r\n"); //sample
 			printf("%s%s", prompt, buffer);
 		}
-		else if (c == '.') { // emergency exit
+		else if (c == '.') // emergency exit (temporary)
+		{
 			system("/bin/stty cooked"); // enable input buffers
 			printf("\r\n");
 			exit(1);
+		}
+		else if (c == '\b' || c == 8 || c == 127) // 'backspace' (8) or 'delete' (127)
+		{
+			if (i > 0)
+			{
+				printf("\b \b"); // replace char with a space
+				i--;
+			}
 		}
 		else {
 			printf("%c", c);
@@ -79,7 +89,19 @@ int parseline()
 	return 1;
 }
 
-int shell_proc(char *arg) {
+int shell_proc(char *arg)
+{
 	// do stuff
+	// cmd1
+	// cmd1;cmd2
+	// cmd1&cmd2
+	// (cmd1;cmd2)&(cmd1;cmd2)
 	printf("pointer test: %s\n", arg);
+	
+	return 1;
+}
+
+int verify_parenthesis_count(char *cmd)
+{
+	// only allow '(' with matching ')'
 }
