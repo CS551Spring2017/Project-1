@@ -81,15 +81,15 @@ int parseline()
 				i--;
 			}
 		}
-		else if (c == '\z' || c == '\x' || c == '\c') // ctrl+(z/x/c)
+		/*else if (c == '\z' || c == '\x' || c == '\c') // ctrl+(z/x/c)
 		{
 			printf("\r\nkeyboard interrupt?\n");
 			
 			system("/bin/stty cooked"); // enable input buffers
 			exit(1);
-		}
+		}*/
 		else {
-			printf("%c", c);
+			printf("%c|%d\n", c);
 			buffer[i++] = c;
 		}
 	}
