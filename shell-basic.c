@@ -10,6 +10,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+int parseline(char *buffer, size_t *bufsize);
+
 int main()
 {
 	char *buffer;
@@ -26,8 +28,13 @@ int main()
 	while (1)
 	{
 		printf("shell> ");
-		characters = getline(&buffer,&bufsize,stdin);
-		printf("%zu characters were read.\n",characters);
-		printf("You typed: '%s'\n",buffer);
+		parseline(buffer, bufsize);
 	}
+}
+
+int parseline(char *buffer, size_t *bufsize)
+{
+	characters = getline(&buffer, &bufsize, stdin);
+	printf("%zu characters were read.\n",characters);
+	printf("You typed: '%s'\n",buffer);
 }
