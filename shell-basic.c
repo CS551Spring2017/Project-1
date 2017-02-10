@@ -92,7 +92,7 @@ int parseline()
 			exit(1);
 		}*/
 		else {
-			printf("%c", c);
+			printf("%c,%d\n", c, c);
 			buffer[i++] = c;
 		}
 	}
