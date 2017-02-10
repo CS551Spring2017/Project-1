@@ -10,12 +10,22 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-int parseline(char *buffer, size_t *bufsize);
+int parseline();
 
 int main()
 {
+	while (1)
+	{
+		printf("shell> ");
+		parseline();
+	}
+}
+
+int parseline()
+{
 	char *buffer;
 	size_t bufsize = 32;
+	size_t characters;
 
 	buffer = (char *)malloc(bufsize * sizeof(char));
 	if (buffer == NULL)
@@ -23,18 +33,7 @@ int main()
 		perror("Unable to allocate buffer");
 		exit(1);
 	}
-	
-	while (1)
-	{
-		printf("shell> ");
-		parseline(&buffer, &bufsize);
-	}
-}
-
-int parseline(char **buffer, size_t *bufsize)
-{
-	size_t characters;
-	characters = getline(&buffer, bufsize, stdin);
+	characters = getline(&buffer,&bufsize,stdin);
 	printf("%zu characters were read.\n",characters);
 	printf("You typed: '%s'\n",buffer);
 	
