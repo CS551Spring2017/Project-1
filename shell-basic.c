@@ -44,7 +44,41 @@ int parseline()
 	char *buffer;
 	size_t bufsize = 32;
 	size_t characters;
+	
+	buffer = (char *)malloc(bufsize * sizeof(char));
+	if (buffer == NULL)
+	{
+		perror("Unable to allocate buffer");
+		exit(1);
+	}
+	
+	int c;
+	int i = 0;
+	int ready = 0;
+	system("/bin/stty raw"); // disable input buffers
+	while (!ready)
+	{
+		c = getchar();
+		if (c == '\n' || c == '\t')
+		{
+			ready = 1;
+			buffer[i++] = '\0';
+		}
+		else {
+			printf("%c", c);
+			buffer[i++] = c;
+		}
+	}
+	system("/bin/stty cooked"); // enable input buffers
+	
+	size_t len = strlen(buffer);
+	if (len > 0 && buffer[len - 1] == '\n')
+	{
+		buffer[--len] = '\0';
+	}
+	printf("[I='%s'] [%d chars]\n", buffer, len);
 
+	/*
 	buffer = (char *)malloc(bufsize * sizeof(char));
 	if (buffer == NULL)
 	{
@@ -60,6 +94,7 @@ int parseline()
 		buffer[--len] = '\0';
 	}
 	printf("[I='%s'] [%d chars]\n", buffer, len);
+	*/
 	
 	return 1;
 }
