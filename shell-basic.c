@@ -34,7 +34,9 @@ int main()
 int parseline(char *buffer, size_t *bufsize)
 {
 	size_t characters;
-	characters = getline(&buffer, &bufsize, stdin);
+	characters = getline(buffer, bufsize, stdin);
 	printf("%zu characters were read.\n",characters);
 	printf("You typed: '%s'\n",buffer);
+	
+	return 1;
 }
