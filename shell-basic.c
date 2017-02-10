@@ -89,7 +89,7 @@ int parseline()
 			exit(1);
 		}*/
 		else {
-			printf("%c|%d\n", c);
+			printf("%c|%d\n", c,c);
 			buffer[i++] = c;
 		}
 	}
