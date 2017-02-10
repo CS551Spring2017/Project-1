@@ -35,12 +35,12 @@ int parseline()
 	}
 	characters = getline(&buffer, &bufsize, stdin);
 	
-	size_t len = strlen(characters);
-	if (len > 0 && characters[len - 1] == '\n')
+	size_t len = strlen(buffer);
+	if (len > 0 && buffer[len - 1] == '\n')
 	{
-		characters[--len] = '\0';
+		buffer[--len] = '\0';
 	}
-	printf("[I='%s'] [%zu chars]\n", buffer, characters);
+	printf("[I='%s'] [%d chars]\n", buffer, len);
 	
 	return 1;
 }
