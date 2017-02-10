@@ -42,11 +42,15 @@ int parseline()
 	while (!ready)
 	{
 		c = getchar();
-		if (c == '\r' || c == '\n' || c == '\t')
+		if (c == '\r' || c == '\n') // 'enter' pressed
 		{
 			ready = 1;
 			buffer[i++] = '\0';
-			system("key called!");
+		}
+		else if (c == '\t') // 'tab' pressed
+		{
+			printf("\nSuggested: cmd1\n           cmd1 -l\n           cmd1 -l -h\n"); //sample
+			printf("Shell> %s", buffer);
 		}
 		else if (c == '.') { // emergency exit
 			system("/bin/stty cooked"); // enable input buffers
