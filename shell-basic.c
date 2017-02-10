@@ -10,25 +10,26 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <curses.h>
 
 int parseline();
 
 int main()
 {
-	initscr();
-	timeout(-1);
-	int c = getch();
-	endwin();
-	printf("%d %c\n", c, c);
-	return 0;
-	/*
+	
+	// test
+	int c;
+	system("/bin/stty raw"); // disable input buffers
+	while ((c = getchar()) != '.')
+	{
+		printf("Char: %c\n", c);
+	}
+	system("bin/stty cooked"); // enable input buffers
+	
 	while (1)
 	{
 		printf("shell> ");
 		parseline();
 	}
-	*/
 }
 
 int parseline()
@@ -42,14 +43,6 @@ int parseline()
 	{
 		perror("Unable to allocate buffer");
 		exit(1);
-	}
-	
-	// test
-	char c;
-	while (1)
-	{
-		c = getchar();
-		printf("Char: %c\n", c);
 	}
 	
 	characters = getline(&buffer, &bufsize, stdin);
