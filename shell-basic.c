@@ -18,12 +18,19 @@ int main()
 	
 	// test
 	int c;
+	int ready = 0;
 	system("/bin/stty raw"); // disable input buffers
-	while ((c = getchar()) != '.')
+	while (!ready)
 	{
-		printf("Char: %c\n", c);
+		c = getchar();
+		if (c == '\n' || c == '\t')
+		{
+			ready = 1;
+		}
+		//printf("Char: %c\n", c);
 	}
-	system("bin/stty cooked"); // enable input buffers
+	system("/bin/stty cooked"); // enable input buffers
+	parseline();
 	
 	while (1)
 	{
