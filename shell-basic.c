@@ -14,24 +14,7 @@
 int parseline();
 
 int main()
-{
-	
-	// test
-	int c;
-	int ready = 0;
-	system("/bin/stty raw"); // disable input buffers
-	while (!ready)
-	{
-		c = getchar();
-		if (c == '\n' || c == '\t')
-		{
-			ready = 1;
-		}
-		//printf("Char: %c\n", c);
-	}
-	system("/bin/stty cooked"); // enable input buffers
-	parseline();
-	
+{	
 	while (1)
 	{
 		printf("shell> ");
