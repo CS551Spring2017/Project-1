@@ -15,6 +15,7 @@ static char *prompt = "shell> ";
 static char done = 0;
 
 int parseline();
+int shell_proc(char *arg);
 
 int main()
 {
@@ -72,24 +73,13 @@ int parseline()
 	
 	size_t len = strlen(buffer);
 	printf(" [I='%s'] [%d chars]\n", buffer, len);
-
-	/*
-	buffer = (char *)malloc(bufsize * sizeof(char));
-	if (buffer == NULL)
-	{
-		perror("Unable to allocate buffer");
-		exit(1);
-	}
 	
-	characters = getline(&buffer, &bufsize, stdin);
-	
-	size_t len = strlen(buffer);
-	if (len > 0 && buffer[len - 1] == '\n')
-	{
-		buffer[--len] = '\0';
-	}
-	printf("[I='%s'] [%d chars]\n", buffer, len);
-	*/
+	shell_proc(buffer);
 	
 	return 1;
+}
+
+int shell_proc(char *arg) {
+	// do stuff
+	printf("pointer test: %s\n", arg);
 }
