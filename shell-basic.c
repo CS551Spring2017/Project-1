@@ -13,6 +13,7 @@
 
 #define CMD_PART_ARGC 1
 #define CMD_PART_ARGV 2
+#define MAXLINE       1024
 #define MAXARGS	      64
 
 static char *prompt = "shell> ";
@@ -202,7 +203,7 @@ shell_cmd parsecmd(char *cmd)
 	//sc.arg_num = argv_num;
 	*/
 	char *p2 = strtok(cmd, " ");
-	while (p2 ** argc < MAXARGS - 1)
+	while (p2 && argc < MAXARGS - 1)
 	{
 		argv[argc++] = p2;
 		p2 = strtok(0, " ");
