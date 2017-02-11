@@ -170,6 +170,9 @@ shell_cmd parsecmd(char *cmd)
 	int len = strlen(cmd);
 	int cmd_part = CMD_PART_ARGC;
 	
+	char *argc_buf;
+	char **argv_buf;
+	
 	for (i = 0; i <= len; i++)
 	{
 		if (cmd_part == CMD_PART_ARGC)
@@ -181,7 +184,7 @@ shell_cmd parsecmd(char *cmd)
 				j = 0;
 			}
 			else {
-				sc.cmd[j] = cmd[i];
+				argc_buf = cmd[i];
 			}
 		}
 		else if (cmd_part == CMD_PART_ARGV)
@@ -192,13 +195,13 @@ shell_cmd parsecmd(char *cmd)
 				j = 0;
 			}
 			else {
-				sc.arg[argv_num][j] = cmd[i];
+				argv_buff[argv_num][j] = cmd[i];
 			}
 		}
 	}
-	sc.arg_num = argv_num;
+	//sc.arg_num = argv_num;
 	
-	printf("%s \n", sc.cmd);
+	printf("%s \n", argc_buf);
 	
 	return sc;
 }
