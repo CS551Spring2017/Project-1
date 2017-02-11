@@ -22,7 +22,7 @@ typedef struct {
 int parseline();
 int shell_process(char *arg);
 int verify_parenthesis_count(char *cmd);
-int parsecmd(char *cmd);
+shell_cmd parsecmd(char *cmd);
 int shell_sequence(char *cmd);
 int shell_parallel(char *cmd);
 
@@ -157,10 +157,12 @@ int verify_parenthesis_count(char *cmd)
 	return 0;
 }
 
-int parsecmd(char *cmd)
+shell_cmd parsecmd(char *cmd)
 {
+	struct shell_cmd *sc;
 	
-	return 1;
+	
+	return sc;
 }
 
 int shell_sequence(char *cmd)
