@@ -198,7 +198,7 @@ shell_cmd parsecmd(char *cmd)
 				j = 0;
 			}
 			else {
-				argv_buf[argv_num][j] = cmd[i];
+				*argv_buf[argv_num][j] = cmd[i];
 				j++;
 			}
 		}
