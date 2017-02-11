@@ -11,6 +11,9 @@
 #include <stdlib.h>
 #include <string.h>
 
+#define CMD_PART_ARGC 1
+#define CMD_PART_ARGV 2
+
 static char *prompt = "shell> ";
 static char done = 0;
 
