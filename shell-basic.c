@@ -10,21 +10,19 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <wordexp.h>
 
 static char *prompt = "shell> ";
 static char done = 0;
 
-/*
-struct shell_cmd {
+typedef struct {
 	char *cmd;
-	
-};
-*/
+	char **arg;
+} shell_cmd;
 
 int parseline();
 int shell_process(char *arg);
 int verify_parenthesis_count(char *cmd);
+int parsecmd(char *cmd);
 int shell_sequence(char *cmd);
 int shell_parallel(char *cmd);
 
@@ -124,13 +122,6 @@ int shell_process(char *arg)
 	int p_count = verify_parenthesis_count(arg);
 	if (!p_count) return 0;
 	
-	wordexp_t p;
-	char **w;
-	int i;
-	
-	wordexp(arg, &p, 0);
-	printf("v: %s\n", p.we_wordv);
-	printf("c: %s\n", p.we_wordc);
 	
 	return 1;
 }
@@ -164,6 +155,12 @@ int verify_parenthesis_count(char *cmd)
 	
 	perror("Mismatched parenthesis (unequal number).");
 	return 0;
+}
+
+int parsecmd(char *cmd)
+{
+	
+	return 1;
 }
 
 int shell_sequence(char *cmd)
