@@ -13,8 +13,7 @@
 
 #define CMD_PART_ARGC 1
 #define CMD_PART_ARGV 2
-#define MAXLINE	      1024
-#define MAXARGS	      128
+#define MAXARGS	      64
 
 static char *prompt = "shell> ";
 static char done = 0;
@@ -168,13 +167,10 @@ shell_cmd parsecmd(char *cmd)
 {
 	shell_cmd sc;
 	
-	int i, j = 0, argv_num = 0;
-	int len = strlen(cmd);
-	int cmd_part = CMD_PART_ARGC;
-	
-	char *argc_buf = (char *)malloc(MAXLINE * sizeof(char));
-	char *argv_buf[MAXARGS][MAXLINE];
-	
+	char *arg = (char *)malloc(MAXLINE * sizeof(char));
+	char *argv[MAXARGS];
+	int argc;
+	/*
 	for (i = 0; i <= len; i++)
 	{
 		if (cmd_part == CMD_PART_ARGC)
@@ -198,14 +194,26 @@ shell_cmd parsecmd(char *cmd)
 				j = 0;
 			}
 			else {
-				*argv_buf[argv_num][j] = cmd[i];
+				argv_buf[argv_num][j] = cmd[i];
 				j++;
 			}
 		}
 	}
 	//sc.arg_num = argv_num;
+	*/
+	char *p2 = strtok(cmd, " ");
+	while (p2 ** argc < MAXARGS - 1)
+	{
+		argv[argc++] = p2;
+		p2 = strtok(0, " ");
+	}
+	argv[argc] = 0;
 	
-	printf("%s \n", argc_buf);
+	int i;
+	for (i = 0; i <= argc; i++)
+	{
+		printf("%d: %s\n", i, argv[i]);
+	}
 	
 	return sc;
 }
