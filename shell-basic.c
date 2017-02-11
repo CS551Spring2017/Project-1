@@ -17,6 +17,7 @@ static char done = 0;
 typedef struct {
 	char *cmd;
 	char **arg;
+	int arg_num;
 } shell_cmd;
 
 int parseline();
@@ -122,6 +123,7 @@ int shell_process(char *arg)
 	int p_count = verify_parenthesis_count(arg);
 	if (!p_count) return 0;
 	
+	parsecmd(arg);
 	
 	return 1;
 }
@@ -161,6 +163,39 @@ shell_cmd parsecmd(char *cmd)
 {
 	shell_cmd sc;
 	
+	int i, j = 0, argv_num = 0;
+	int len = strlen(cmd);
+	int cmd_part = CMD_PART_ARGC;
+	
+	for (i = 0; i <= len; i++)
+	{
+		if (cmd_part == CMD_PART_ARGC)
+		{
+			if (cmd[i] == ' ')
+			{
+				// change to argv
+				cmd_part = CMD_PART_ARGV;
+				j = 0;
+			}
+			else {
+				sc.cmd[j] = cmd[i];
+			}
+		}
+		else if (cmd_part == CMD_PART_ARGV)
+		{
+			if (cmd[i] == ' ')
+			{
+				argv_num++;
+				j = 0;
+			}
+			else {
+				sc.arg[argv_num][j] = cmd[i];
+			}
+		}
+	}
+	sc.arg_num = argv_num;
+	
+	printf("%s \n", sc.cmd);
 	
 	return sc;
 }
