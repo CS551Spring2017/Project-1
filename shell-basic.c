@@ -159,7 +159,7 @@ int verify_parenthesis_count(char *cmd)
 
 shell_cmd parsecmd(char *cmd)
 {
-	struct shell_cmd *sc;
+	shell_cmd *sc;
 	
 	
 	return sc;
