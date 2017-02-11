@@ -172,9 +172,8 @@ shell_cmd parsecmd(char *cmd)
 	int len = strlen(cmd);
 	int cmd_part = CMD_PART_ARGC;
 	
-	char *argc_buf;
-	char *argv_buf[MAXARGS];
-	argc_buf = (char *)malloc(MAXLINE * sizeof(char));
+	char *argc_buf = (char *)malloc(MAXLINE * sizeof(char));
+	char **argv_buf[MAXARGS][MAXLINE];
 	
 	for (i = 0; i <= len; i++)
 	{
