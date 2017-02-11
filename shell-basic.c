@@ -168,52 +168,11 @@ shell_cmd parsecmd(char *cmd)
 {
 	shell_cmd sc;
 	
-	char *arg = (char *)malloc(MAXLINE * sizeof(char));
-	char *argv[MAXARGS];
-	int argc;
-	/*
-	for (i = 0; i <= len; i++)
-	{
-		if (cmd_part == CMD_PART_ARGC)
-		{
-			if (cmd[i] == ' ')
-			{
-				// change to argv
-				cmd_part = CMD_PART_ARGV;
-				j = 0;
-			}
-			else {
-				argc_buf[j] = cmd[i];
-				j++;
-			}
-		}
-		else if (cmd_part == CMD_PART_ARGV)
-		{
-			if (cmd[i] == ' ')
-			{
-				argv_num++;
-				j = 0;
-			}
-			else {
-				argv_buf[argv_num][j] = cmd[i];
-				j++;
-			}
-		}
-	}
-	//sc.arg_num = argv_num;
-	*/
 	char *p2 = strtok(cmd, " ");
-	while (p2 && argc < MAXARGS - 1)
+	printf("Cmd: %s\n", p2);
+	while ((p2 = strtok(NULL, " ")) != NULL)
 	{
-		argv[argc++] = p2;
-		p2 = strtok(0, " ");
-	}
-	argv[argc] = 0;
-	
-	int i;
-	for (i = 0; i <= argc; i++)
-	{
-		printf("%d: %s\n", i, argv[i]);
+		printf("Arg(s): %s\n", p2);
 	}
 	
 	return sc;
