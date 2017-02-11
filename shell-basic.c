@@ -13,6 +13,7 @@
 
 #define CMD_PART_ARGC 1
 #define CMD_PART_ARGV 2
+#define MAXLINE	      1024
 #define MAXARGS	      128
 
 static char *prompt = "shell> ";
@@ -173,6 +174,7 @@ shell_cmd parsecmd(char *cmd)
 	
 	char *argc_buf;
 	char *argv_buf[MAXARGS];
+	argc_buf = (char *)malloc(MAXLINE * sizeof(char));
 	
 	for (i = 0; i <= len; i++)
 	{
