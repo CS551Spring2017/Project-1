@@ -10,6 +10,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 
 #define CMD_PART_ARGC 1
 #define CMD_PART_ARGV 2
@@ -106,7 +107,8 @@ int parseline()
 	size_t len = strlen(buffer);
 	printf(" [I='%s'] [%d chars]\n", buffer, len);
 	
-	shell_process(buffer);
+	//shell_process(buffer);
+	shell_sequence(buffer);
 	
 	return 1;
 }
@@ -180,6 +182,20 @@ shell_cmd parsecmd(char *cmd)
 
 int shell_sequence(char *cmd)
 {
+	char *args[] = {"ls", "-la", "/", 0};
+	char *env[] = { 0 };
+	
+	printf("trying ls");
+	int pid = fork();
+	if (pid == 0)
+	{
+		execve("/bin/ls", args, env);
+	}
+	else
+	{
+		waitpid(pid);
+	}
+	
 	
 	return 1;
 }
