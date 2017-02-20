@@ -156,7 +156,7 @@ int main(int argc, char **argv)
 	eval(cmdline);
 	fflush(stdout);
 	fflush(stdout); /* why is there two? */
-    } 
+    }
 
     exit(0); /* control never reaches here */
 }

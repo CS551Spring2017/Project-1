@@ -11,6 +11,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <wordexp.h>
+#include <unistd.h> 
 
 static char *prompt = "shell> ";
 static char done = 0;
@@ -21,6 +22,9 @@ struct shell_cmd {
 	
 };
 */
+
+#define MAXLINE    1024   /* max line size */
+#define MAXARGS     128   /* max args on a command line */
 
 int parseline();
 int shell_process(char *arg);
@@ -42,6 +46,7 @@ int main()
 
 int parseline()
 {
+	char cmdline[MAXLINE];
 	char *buffer;
 	size_t bufsize = 32;
 	size_t characters;
@@ -72,6 +77,7 @@ int parseline()
 		}
 		else if (c == '.') // emergency exit (temporary)
 		{
+			//shell_parallel(buffer);
 			system("/bin/stty cooked"); // enable input buffers
 			printf("\r\n");
 			exit(1);
@@ -106,6 +112,8 @@ int parseline()
 	
 	return 1;
 }
+
+
 
 int shell_process(char *arg)
 {
@@ -172,8 +180,35 @@ int shell_sequence(char *cmd)
 	return 1;
 }
 
-int shell_parallel(char *cmd)
+int shell_parallel(char *cmd1)
 {
-	
+	char *argv1[5];
+	char *argv2[5];
+	argv1[0] = "/bin/ls";
+	argv2[0] = "/bin/ps";
+    pid_t child1;
+    pid_t child2;
+
+	if(!(child1 = fork())) {
+		setpgid(0,0);
+		if (execv(argv1[0],argv1)<0){
+			printf("Command 1 not found\n");
+			exit(0);
+		}
+	} else if (!(child2 = fork())){
+		setpgid(0,0);
+		if (execv(argv2[0],argv2)<0){
+			printf("Command 2 not found\n");
+			exit(0);
+		}
+	} else{
+		printf("parent shell\n");
+		wait(&child1);
+		wait(&child2);
+	}
+
 	return 1;
 }
+
+
+
