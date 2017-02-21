@@ -32,7 +32,7 @@ char path[100];
 
 int main()
 {
-	
+	loadProfile();
 	while (!done)
 	{
 		printf("%s", prompt);
@@ -95,7 +95,6 @@ int parseline()
 	
 	size_t len = strlen(buffer);
 	printf(" [I='%s'] [%d chars]\n", buffer, len);
-	loadProfile();
 	shell_process(buffer);
 	//buffer[i] = ' ';buffer[i+1] = '\0';
 	shell_sequence(buffer);
@@ -273,7 +272,7 @@ int shell_parallel(char *cmd)
 void loadProfile()
 {
 	FILE *profile;
-	char *pathread;
+	char *buffer;
 	size_t bufsize = 100;
 	size_t characters;
 	profile = fopen("PROFILE", "r");
@@ -282,9 +281,11 @@ void loadProfile()
         perror("PROFILE not found");
 		return;
 	}
-	characters = getline(&pathread, &bufsize, profile);
-	printf("PATH set to: %s", pathread);
-	putenv(pathread);
-	char home[] = "/usr/";
-	chdir(home);
+	characters = getline(&buffer, &bufsize, profile);
+	printf("PATH set to: %s", buffer);
+	putenv(buffer);
+	characters = getline(&buffer, &bufsize, profile);
+	printf("HOME set to: %s\n",buffer+5);
+	chdir(buffer+5);
+	fclose(profile);
 }
