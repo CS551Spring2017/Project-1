@@ -68,7 +68,7 @@ int main() {
 
 	char *s = prefix;
 	Tree *tree = makeTree(&s);
-	printInfix(tree);	
+	printInfix(tree);
 	release(tree);
 	
 	return(1);
@@ -179,14 +179,13 @@ void makeAllCmds(char *prefix){
 			if(token[0]=='-'){
 				++arg;
 				all_cmds[prevCmd].argv[arg] = token;
-				//printf("%s\n", all_cmds[i-1].argv[1]);
 			}
 			else{
+				all_cmds[prevCmd].argv[++arg] = NULL;
 				arg = 0;
 				all_cmds[i].argv[0] = token;
 				prevCmd = i;
 				++i;
-				//printf("%s\n", all_cmds[i].argv[0]);
 			}
 		}
 		token = strtok(NULL," ");
@@ -334,4 +333,3 @@ int isOperatorString(char * symbol) {
 		return 0;
 	}
 }
-
