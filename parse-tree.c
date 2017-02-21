@@ -342,6 +342,11 @@ int isOperatorString(char * symbol) {
 
 void traverse(Tree *tree)
 {
+	if(tree == NULL)
+	{
+		printf("Invalid input\n");
+		exit(1);
+	}
   //CODE FOR PARALLEL
 	if(!(strcmp(tree->op, "&"))) //Is the root operator &?
   {
@@ -381,7 +386,7 @@ void traverse(Tree *tree)
     }
   }
   //CODE FOR SEQUENCE
-  if(!(strcmp(tree->op, ";"))) //Is the root operator ;?
+  else if(!(strcmp(tree->op, ";"))) //Is the root operator ;?
   {
   	if(isOperatorString(tree->left->op)) //Is the LEFTside a command?
     {
@@ -417,13 +422,23 @@ void traverse(Tree *tree)
     }
     else //Rightside IS a command
     {
-    	pid_t cmd = fork();
+		pid_t cmd = fork();
+	  if(cmd == 0)
+	  {
+		execvp(tree->right->cmd.argv[0],tree->right->cmd.argv);
+	  }
+	  int status;
+	  waitpid(cmd, &status, 0);
+    }
+  }
+  else //Neither ; or &, single command entered
+  {
+	  pid_t cmd = fork();
       if(cmd == 0)
       {
-        execvp(tree->right->cmd.argv[0],tree->right->cmd.argv);
+        execvp(tree->cmd.argv[0],tree->cmd.argv);
       }
       int status;
       waitpid(cmd, &status, 0);
-    }
   }
 }
