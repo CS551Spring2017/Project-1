@@ -8,7 +8,7 @@
 
 //Infix to Prefix functions
 
-void infixtoprefix(char infix[MAXARGS],char prefix[MAXARGS]);
+void infixToPrefix(char infix[MAXARGS],char prefix[MAXARGS]);
 void reverse(char array[MAXARGS]);
 char pop();
 void push(char symbol);
@@ -60,7 +60,7 @@ int main() {
 	printf("Enter infix operation: ");
 	gets(infix);
 	
-	infixtoprefix(infix,prefix);
+	infixToPrefix(infix,prefix);
 	reverse(prefix);
 	puts(prefix);
 	
@@ -155,11 +155,12 @@ void printInfix(Tree *tree){
 		}
 		else{
 			if(tree->cmd.argv[1]==NULL){
-				printf("%s", tree->cmd.argv[0]);
+				printf("%s ", tree->cmd.argv[0]);
 			}
 			else{
 				int k=1;
-				printf("%s", tree->cmd.argv[0]);
+				printf("%s ", tree->cmd.argv[0]);
+				//printf("Args:");
 				while(tree->cmd.argv[k]){
 					printf("%s ",tree->cmd.argv[k]);
 					++k;
@@ -176,8 +177,9 @@ void makeAllCmds(char *prefix){
 	char * token = strtok(prefix," ");
 	while(token){
 		if(isOperatorString(token)==0){
-			if(token[0]=='-'){
+			if(token[0]=='*'){
 				++arg;
+				token++;
 				all_cmds[prevCmd].argv[arg] = token;
 			}
 			else{
@@ -192,7 +194,7 @@ void makeAllCmds(char *prefix){
 	}
 }
 
-void infixtoprefix(char infix[MAXARGS],char prefix[MAXARGS]) {
+void infixToPrefix(char infix[MAXARGS],char prefix[MAXARGS]) {
 	int i,j=0;
 	char symbol;
 	stack[++top]='#';
@@ -208,7 +210,12 @@ void infixtoprefix(char infix[MAXARGS],char prefix[MAXARGS]) {
 					prefix[j] = ' ';
 					j++;
 				}
+				if(temp == ' '){
+					prefix[j] = '*';
+					j++;
+				}
 			}
+			
 		}
 		else {
 			if (symbol==')') {
