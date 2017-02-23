@@ -86,27 +86,31 @@ char *getToken(char **p){
 		return NULL;
 	}
 	
-	if(*ret == '*'){
+	while(*ret == '*'){
 		//printf("found arg\n");
+		//printf("%s\n", ret);
 		while(**p && !isspace(**p)){
 			++*p;
 		}
 		++*p;
 		ret = *p;
-		//printf("%s\n", ret);
+	}
+	
+	if(*ret == '*'){
+		
 	}
 	else{
 		while(**p && !isspace(**p)){
         	++*p;
         }
+        ++*p;
 	}
 
 	if(!**p){
-		
 		**p = 0;
 		++*p;
-		
 	}
+
 	return ret;
 }
 
