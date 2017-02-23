@@ -7,4 +7,5 @@
  *   Sufyan Menk
  */
 
-void loadProfile();
+int loadProfile();
+extern int enableAlarm;

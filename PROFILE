@@ -1,0 +1,3 @@
+PATH=/usr/bin/
+HOME=/usr/
+ALARM=0

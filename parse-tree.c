@@ -13,7 +13,10 @@
 #include <ctype.h>
 #include <sys/wait.h>
 #include <unistd.h>
+#include <sys/types.h>
+#include <signal.h>
 #include "parse-tree.h"
+#include "profile.h"
 
 //Global Vars
 
@@ -51,7 +54,7 @@ int main() {
 	printf("Enter infix operation: ");
 	gets(infix);
 	
-	infixtoprefix(infix,prefix);
+	infixToPrefix(infix,prefix);
 	reverse(prefix);
 	puts(prefix);
 	
@@ -174,12 +177,13 @@ void printInfix(Tree *tree)
 		{
 			if (tree->cmd.argv[1] == NULL)
 			{
-				printf("%s", tree->cmd.argv[0]);
+				printf("%s ", tree->cmd.argv[0]);
 			}
 			else
 			{
 				int k = 1;
-				printf("%s", tree->cmd.argv[0]);
+				printf("%s ", tree->cmd.argv[0]);
+				//printf("Args:");
 				while (tree->cmd.argv[k])
 				{
 					printf("%s ",tree->cmd.argv[k]);
@@ -200,9 +204,10 @@ void makeAllCmds(char *prefix)
 	{
 		if (isOperatorString(token) == 0)
 		{
-			if (token[0] == '-')
+			if (token[0] == '*')
 			{
 				++arg;
+				token++;
 				all_cmds[prevCmd].argv[arg] = token;
 			}
 			else
@@ -218,7 +223,7 @@ void makeAllCmds(char *prefix)
 	}
 }
 
-void infixtoprefix(char infix[MAXARGS], char prefix[MAXARGS])
+void infixToPrefix(char infix[MAXARGS], char prefix[MAXARGS])
 {
 	int i,j=0;
 	char symbol;
@@ -237,6 +242,11 @@ void infixtoprefix(char infix[MAXARGS], char prefix[MAXARGS])
 				if (isNonParenOperator(temp) == 1)
 				{
 					prefix[j] = ' ';
+					j++;
+				}
+				if (temp == ' ')
+				{
+					prefix[j] = '*';
 					j++;
 				}
 			}
@@ -414,6 +424,10 @@ void traverse(Tree *tree)
 				printf("%s: command not found\n", tree->right->cmd.argv[0]);
 				exit(1);
 			}
+			else
+			{
+				spawnMonitor(cmd);
+			}
 		}
 		if (isOperatorString(tree->left->op)) //Is the LEFTside a command?
 		{
@@ -432,6 +446,10 @@ void traverse(Tree *tree)
 				execvp(tree->left->cmd.argv[0],tree->left->cmd.argv);
 				printf("%s: command not found\n", tree->left->cmd.argv[0]);
 				exit(1);
+			}
+			else
+			{
+				spawnMonitor(cmd);
 			}
 		}
 	}
@@ -458,6 +476,10 @@ void traverse(Tree *tree)
 				printf("%s: command not found\n", tree->left->cmd.argv[0]);
 				exit(1);
 			}
+			else
+			{
+				spawnMonitor(cmd);
+			}
 			int status;
 			waitpid(cmd, &status, 0);
 		}
@@ -481,6 +503,10 @@ void traverse(Tree *tree)
 				printf("%s: command not found\n", tree->right->cmd.argv[0]);
 				exit(1);
 			}
+			else
+			{
+				spawnMonitor(cmd);
+			}
 			int status;
 			waitpid(cmd, &status, 0);
 		}
@@ -494,7 +520,46 @@ void traverse(Tree *tree)
 			printf("%s: command not found\n", tree->cmd.argv[0]);
 			exit(1);
 		}
+		else
+		{
+			spawnMonitor(cmd);
+		}
 		int status;
 		waitpid(cmd, &status, 0);
+	}
+}
+
+void spawnMonitor(pid_t pid)
+{
+    if (enableAlarm)
+    {
+        pid_t monitor = fork();
+        if (monitor == 0)
+        {
+            sleep(5);
+            int ret = kill(pid, 0);
+            if(ret == 0)
+            {
+                terminatePrompt(pid);
+            }
+            exit(0);
+        }
+    }
+}
+
+void terminatePrompt(pid_t pid)
+{
+	char answer = ' ';
+	printf("Terminate process: %d? (Y/N)", pid);
+	fflush(stdout);
+	while (answer != 'Y' && answer != 'y' && answer != 'N' && answer != 'n')
+	{
+		answer = getc(stdin);
+	}
+	getchar(); //avoid the case when the next command will be '\r'
+	if (answer == 'Y' || answer == 'y')
+	{
+		kill(pid, SIGKILL);
+		printf("Terminated process: %d.\n", pid);
 	}
 }
