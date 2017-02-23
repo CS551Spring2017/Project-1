@@ -86,7 +86,7 @@ char *getToken(char **p){
 		return NULL;
 	}
 	
-	if(*ret == '-'){
+	if(*ret == '*'){
 		//printf("found arg\n");
 		while(**p && !isspace(**p)){
 			++*p;
@@ -210,12 +210,16 @@ void infixToPrefix(char infix[MAXARGS],char prefix[MAXARGS]) {
 					prefix[j] = ' ';
 					j++;
 				}
-				if(temp == ' '){
-					prefix[j] = '*';
-					j++;
+				if(i+2 != strlen(infix)){
+					char temp2 = infix[i+2];
+					if(!isOperator(temp2)){
+						if(temp == ' '){
+							prefix[j] = '*';
+							j++;
+						}
+					}
 				}
 			}
-			
 		}
 		else {
 			if (symbol==')') {
