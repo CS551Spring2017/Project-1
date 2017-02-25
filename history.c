@@ -10,7 +10,16 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 #include "history.h"
+
+char historyFilePath[1024];
+
+void setHistoryFilePath()
+{
+	getcwd(historyFilePath, sizeof(historyFilePath));
+	strcat(historyFilePath, "/HISTORY");
+}
 
 int read_history(char *history[])
 {
@@ -19,7 +28,7 @@ int read_history(char *history[])
 	size_t len = 0;
 	ssize_t read;
 	int h_pos = 0;
-	fp = fopen("HISTORY", "r");
+	fp = fopen(historyFilePath, "r");
 	if (fp == NULL)
 	{
 		perror("No HISTORY file");
@@ -53,7 +62,7 @@ int add_history(char *history[], int history_num, char *cmd)
 	int in_history = 0, i;
 	for (i = 0; i < history_num; i++)
 	{
-		if (!strcmp(history[i], cmd)) // line already in history
+		if (strncmp(history[i], cmd, strlen(cmd))) // line already in history
 		{
 			in_history = 1;
 			break;
@@ -63,7 +72,7 @@ int add_history(char *history[], int history_num, char *cmd)
 	{
 		FILE * fp;
 		
-		fp = fopen("HISTORY", "a");
+		fp = fopen(historyFilePath, "a");
 		if (fp == NULL)
 		{
 			perror("Unable to write to HISTORY file");

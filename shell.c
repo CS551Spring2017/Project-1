@@ -23,6 +23,7 @@ static char done = 0;
 int main()
 {
 	enableAlarm = loadProfile();
+	setHistoryFilePath();
 	
 	while (!done)
 	{
@@ -166,7 +167,7 @@ int parseline()
 					}
 					if (history_found == 0)
 					{
-						printf("\r%s%s%s", prompt, buffer, " (no more history - top)");
+						printf("\r%s%s", prompt, buffer);
 					}
 				}
 			}
@@ -199,7 +200,7 @@ int parseline()
 					}
 					if (history_found == 0)
 					{
-						printf("\r%s%s%s", prompt, buffer, " (no more history - bottom)");
+						printf("\r%s%s", prompt, buffer);
 					}
 				}
 			}
@@ -303,6 +304,12 @@ int parseline()
 		add_history(history, history_num_match, buf2);
 	}
 	
+	// free history
+	for (i = 0; i < history_num_match; i++)
+	{
+		free(history[i]);
+	}
+	
 	return 1;
 }
 
@@ -311,24 +318,39 @@ int shell_process(char *buffer)
 	int p_count = verify_parenthesis_count(buffer);
 	if (!p_count) return 0;
 	
-	char prefix[MAXARGS];
-	
-	resetGlobal();
-	infixToPrefix(buffer,prefix);
-	reverse(prefix);
-	//puts(prefix);
-	
-	makeAllCmds(prefix);
-
-	char *s = prefix;
-	Tree *tree = makeTree(&s);
-	if (tree == NULL)
+	if (!strncmp(buffer, "cd", 2))
 	{
-		perror("Invalid input.");
-		return 0;
+		if (isDirectory(buffer + 3))
+		{
+			printf("Change directory: '%s'.\n", buffer + 3);
+			chdir(buffer + 3);
+		}
+		else
+		{
+			printf("Unable to change directory, '%s' is not a directory.\n", buffer + 3);
+		}
 	}
-	traverse(tree);
-	release(tree);
+	else
+	{
+		char prefix[MAXARGS];
+	
+		resetGlobal();
+		infixToPrefix(buffer,prefix);
+		reverse(prefix);
+		//puts(prefix);
+		
+		makeAllCmds(prefix);
+
+		char *s = prefix;
+		Tree *tree = makeTree(&s);
+		if (tree == NULL)
+		{
+			perror("Invalid input.");
+			return 0;
+		}
+		traverse(tree);
+		release(tree);
+	}
 	
 	return 1;
 }

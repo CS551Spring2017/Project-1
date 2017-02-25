@@ -10,5 +10,6 @@
 #define MAXHISTORY 64
 #define MAXHISTORYLEN 512
 
+void setHistoryFilePath();
 int read_history(char *history[]);
 int add_history(char *history[], int history_num, char *cmd);
