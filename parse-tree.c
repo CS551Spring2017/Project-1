@@ -547,12 +547,25 @@ void spawnMonitor(pid_t pid)
         pid_t monitor = fork();
         if (monitor == 0)
         {
-            sleep(5);
-            int ret = kill(pid, 0);
-            if(ret == 0)
-            {
-                terminatePrompt(pid);
-            }
+			pid_t monitor_monitor = fork();
+			if (monitor_monitor)
+			{
+				sleep(6);
+				while (kill(pid, 0) == 0);
+				if (kill(monitor_monitor, 0) == 0)
+				{
+					kill(monitor_monitor, SIGKILL);
+					//printf("Killed rogue monitor");
+				}
+			}
+			else {
+				sleep(5);
+				int ret = kill(pid, 0);
+				if(ret == 0)
+				{
+					terminatePrompt(pid);
+				}
+			}
             exit(0);
         }
     }
@@ -563,11 +576,14 @@ void terminatePrompt(pid_t pid)
 	char answer = ' ';
 	printf("Terminate process: %d? (Y/N)", pid);
 	fflush(stdout);
+	/*
 	while (answer != 'Y' && answer != 'y' && answer != 'N' && answer != 'n')
 	{
 		answer = getc(stdin);
 	}
 	getchar(); //avoid the case when the next command will be '\r'
+	*/
+	answer = getchar();
 	if (answer == 'Y' || answer == 'y')
 	{
 		kill(pid, SIGKILL);
