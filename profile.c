@@ -36,12 +36,14 @@ int loadProfile()
 		return 1;
 	}
 	buffer[strlen(buffer) - 1] = '\0'; // remove \n
+	/*
 	if (!isDirectory(buffer + 5))
 	{
 		perror("Invalid PROFILE file. (Invalid PATH)");
 		printf("'%s' is not a directory", buffer + 5);
 		return 1;
 	}
+	*/
     printf("PATH set to: %s\n", buffer + 5);
     putenv(buffer + 5);
     getline(&buffer, &bufsize, profile);

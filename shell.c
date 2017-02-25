@@ -22,6 +22,17 @@ static char done = 0;
 
 int main()
 {
+	/*
+	if (ISMINIX)
+	{
+		printf("Compiled with ISMINIX = 1.\n");
+	}
+	else
+	{
+		printf("Compiled with ISMINIX = 0.\n");
+	}
+	*/
+	
 	enableAlarm = loadProfile();
 	setHistoryFilePath();
 	
@@ -68,7 +79,7 @@ int parseline()
 			{
 				if (ISMINIX == 1)
 				{
-					printf("\b \b"); // replace char with a space (for minix)
+					//printf("\b \b"); // replace char with a space (for minix)
 				}
 				else
 				{
@@ -82,7 +93,7 @@ int parseline()
 					// cannot do multiple spaces
 					if (ISMINIX == 1)
 					{
-						printf("\b \b"); // replace char with a space (for minix)
+						//printf("\b \b"); // replace char with a space (for minix)
 					}
 					else
 					{
@@ -91,6 +102,14 @@ int parseline()
 				}
 				else
 				{
+					if (ISMINIX == 1)
+					{
+						printf(" ");
+					}
+					else
+					{
+						
+					}
 					last_key_space = 1;
 					buffer[i++] = c;
 				}
