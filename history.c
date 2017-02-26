@@ -34,7 +34,12 @@ int read_history(char *history[])
 		perror("No HISTORY file");
 		return 0;
 	}
-	
+	/*
+	else
+	{
+		printf("Reading history from '%s'...\n", historyFilePath);
+	}
+	*/
 	
 	while ((read = getline(&line, &len, fp)) != -1)
 	{
@@ -49,6 +54,7 @@ int read_history(char *history[])
 		}
 		line[strlen(line) - 1] = '\0'; // otherwise line = 'cmd1                  ' or similar
 		//printf("%d%s\n", h_pos++, line);
+		//printf("H:'%s'\n", line);
 		history[h_pos] = (char *)malloc(MAXHISTORYLEN * sizeof(char));
 		strcpy(history[h_pos++], line);
 	}
@@ -62,13 +68,19 @@ int add_history(char *history[], int history_num, char *cmd)
 	int in_history = 0, i;
 	for (i = 0; i < history_num; i++)
 	{
-		if (strncmp(history[i], cmd, strlen(cmd))) // line already in history
+		if (strncmp(history[i], cmd, strlen(cmd)) == 0) // line already in history
 		{
 			in_history = 1;
 			break;
 		}
+		/*
+		else
+		{
+			printf("UM:'%s'(%d)|'%s'(%d)\n", history[i], strlen(history[i]), cmd, strlen(cmd));
+		}
+		*/
 	}
-	if (!in_history)
+	if (in_history == 0)
 	{
 		FILE * fp;
 		
@@ -81,6 +93,7 @@ int add_history(char *history[], int history_num, char *cmd)
 		else
 		{
 			fprintf(fp, "%s\n", cmd);
+			fclose(fp);	
 			return 1;
 		}
 	}

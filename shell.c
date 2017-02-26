@@ -23,7 +23,7 @@ static char done = 0;
 int main()
 {
 	/*
-	if (ISMINIX)
+	if (ISMINIX == 1)
 	{
 		printf("Compiled with ISMINIX = 1.\n");
 	}
@@ -64,14 +64,16 @@ int parseline()
 	int history_num_match = read_history(history); // set history
 	int history_match_len = 0;			// how long the original buffer was when 'tab' was hit
 	int history_last_index = -1;		// last history index
-	//int k27 = 0;
-	//int k91 = 0;
+	int k27 = 0;
+	int k91 = 0;
 	int last_key_space = 0;				// prevent double spaces
+	//int last_key_91 = 0;				// up/down fix
 	
 	system("/bin/stty raw"); // disable input buffers
 	while (!ready)
 	{
 		c = getchar();
+		//printf("[%d]\n", c);
 		if (c == 32 || c == ' ')
 		{
 			// first char cannot be space.
@@ -129,7 +131,7 @@ int parseline()
 				clearline();
 				if (history_match_len == 0 && history_last_index == -1) // first time hitting 'tab'
 				{
-					history_match_len = i;
+					history_match_len = strlen(buffer);
 					
 					int j, history_found = 0;
 					for (j = 0; j < history_num_match; j++)
@@ -151,7 +153,8 @@ int parseline()
 					}
 					if (history_found == 0)
 					{
-						printf("%s", " (no match)");
+						printf("\r%s%s%s", prompt, buffer, " (no match)");
+						//printf("\r%s%s%s", prompt, buffer, " (no match)");
 					}
 				}
 				else
@@ -170,7 +173,7 @@ int parseline()
 				{
 					clearline();
 					int j, history_found = 0;
-					for (j = history_last_index - 1; j > 0; j--)
+					for (j = history_last_index - 1; j >= 0; j--)
 					{
 						// iterate through history and find next 'match'
 						if (strncmp(buffer, history[j], history_match_len) == 0)
@@ -186,7 +189,8 @@ int parseline()
 					}
 					if (history_found == 0)
 					{
-						printf("\r%s%s", prompt, buffer);
+						printf("\r%s%s%s", prompt, buffer, " (no match-up)");
+						//printf("\r%s%s", prompt, buffer);
 					}
 				}
 			}
@@ -219,7 +223,8 @@ int parseline()
 					}
 					if (history_found == 0)
 					{
-						printf("\r%s%s", prompt, buffer);
+						printf("\r%s%s%s", prompt, buffer, " (no match-down)");
+						//printf("\r%s%s", prompt, buffer);
 					}
 				}
 			}
@@ -233,12 +238,13 @@ int parseline()
 			*/
 			else if (c == '\b' || c == 8 || c == 127) // 'backspace' (8) or 'delete' (127)
 			{
-				if (i > 0)
+				if (i >= 0)
 				{
 					/*
 					clearline();
 					printf("\r%s%s", prompt, buffer);
 					*/
+					
 					if (ISMINIX == 1)
 					{
 						printf("\b \b"); // replace char with a space (for minix)
@@ -247,11 +253,25 @@ int parseline()
 					{
 						printf(" \b"); // for ubuntu, etc.
 					}
+					
 					i--;
+					/*
+					buffer[i--] = '\0';
+					clearline(); // hopefully this fixes both
+					printf("%s%s", prompt, buffer);
+					if (i < 0) i = 0;
+					*/
 				}
 				else
 				{
-					printf(" ");
+					if (ISMINIX == 1)
+					{
+						
+					}
+					else
+					{
+						printf(" ");
+					}
 				}
 			}
 			else if (c == 26 || c == 24 || c == 3 || c == 4) // ctrl + (26=z, 24=x, 3=c, 4=d)
@@ -262,19 +282,21 @@ int parseline()
 				printf("\r\n");
 				exit(1);
 			}
-			/*
 			else if (c == 27)
 			{
 				k27 = 1;
 				k91 = 0;
-				printf("%s", "<k27>");
+				printf("%c", c);
+				//printf("%s", "<k27>");
 			}
 			else if (k27 == 1 && c == 91)
 			{
 				k27 = 0;
 				k91 = 1;
-				printf("%s", "<k91>");
+				printf("\b"); // this is the prelude to up/down arrow
+				//printf("%s", "<k91>");
 			}
+			/*
 			else if (k91 == 1 && c == 65)
 			{c = getchar();
 				// emulate down
@@ -294,19 +316,27 @@ int parseline()
 				// ignore
 			}
 			*/
-			else {
+			else
+			{
+				/*
+				if (c == 91 || c == '[')
+				{
+					// do nothing (up/down)
+				}
+				*/
 				// for windows, don't print %c.
 				if (ISMINIX == 1)
 				{
-					printf("%c", c); // %c for minix
+					//printf("%c", c); // %c for minix
 				}
 				else
 				{
 					// no char output for ubuntu
 				}
 				//printf("\b[%d]", c); // debugging keycodes
-				
 				buffer[i++] = c;
+				clearline(); // hopefully this fixes both
+				printf("%s%s", prompt, buffer);
 			}	
 		}
 	}
@@ -351,6 +381,7 @@ int shell_process(char *buffer)
 	}
 	else
 	{
+		printf("Input: [%s]\n", buffer);
 		char prefix[MAXARGS];
 	
 		resetGlobal();
@@ -407,5 +438,13 @@ int verify_parenthesis_count(char *buffer)
 
 void clearline()
 {
-	printf("\33[2K\r");
+	if (ISMINIX == 1)
+	{
+		printf("\r                                                                                \r");
+		//printf("^[[2K\r");
+	}
+	else
+	{
+		printf("\33[2K\r");
+	}
 }
