@@ -335,6 +335,7 @@ int parseline()
 				}
 				//printf("\b[%d]", c); // debugging keycodes
 				buffer[i++] = c;
+				buffer[i] = '\0'; // weird characters at end...
 				clearline(); // hopefully this fixes both
 				printf("%s%s", prompt, buffer);
 			}	
