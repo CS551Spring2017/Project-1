@@ -15,13 +15,34 @@
 #include "shell.h"
 #include "history.h"
 #include "parse-tree.h"
+#include "profile.h"
+#include <signal.h>
 
 static char *prompt = "shell> ";
 static char done = 0;
 
+void sigChild(int sig);
+void sigtStop(int sig);
+
 int main()
 {
-	
+	/*
+	if (ISMINIX)
+	{
+		printf("Compiled with ISMINIX = 1.\n");
+	}
+	else
+	{
+		printf("Compiled with ISMINIX = 0.\n");
+	}
+	*/
+	printf("Before signal\n");
+	signal(SIGINT, sigChild);
+	printf("After signal\n");
+	enableAlarm = loadProfile();
+	printf("After loadProfile\n");
+	setHistoryFilePath();
+	printf("After set History\n");
 	while (!done)
 	{
 		printf("%s", prompt);
@@ -29,6 +50,9 @@ int main()
 	}
 	
 	return 0;
+}
+void sigChild(int sig){
+	return;
 }
 
 int parseline()
@@ -52,184 +76,248 @@ int parseline()
 	int history_last_index = -1;		// last history index
 	//int k27 = 0;
 	//int k91 = 0;
+	int last_key_space = 0;				// prevent double spaces
 	
 	system("/bin/stty raw"); // disable input buffers
 	while (!ready)
 	{
 		c = getchar();
-		if (c == '\r' || c == '\n') // 'enter' pressed
+		if (c == 32 || c == ' ')
 		{
-			ready = 1;
-			buffer[i++] = '\0';
-			printf("\r\n");
-		}
-		else if (c == '\t') // 'tab' pressed
-		{
-			clearline();
-			if (history_match_len == 0 && history_last_index == -1) // first time hitting 'tab'
+			// first char cannot be space.
+			if (i == 0)
 			{
-				history_match_len = i;
+				if (ISMINIX == 1)
+				{
+					//printf("\b \b"); // replace char with a space (for minix)
+				}
+				else
+				{
+					printf("\b"); // for ubuntu, etc.
+				}
+			}
+			else
+			{
+				if (last_key_space == 1)
+				{
+					// cannot do multiple spaces
+					if (ISMINIX == 1)
+					{
+						//printf("\b \b"); // replace char with a space (for minix)
+					}
+					else
+					{
+						printf("\b"); // for ubuntu, etc.
+					}
+				}
+				else
+				{
+					if (ISMINIX == 1)
+					{
+						printf(" ");
+					}
+					else
+					{
+						
+					}
+					last_key_space = 1;
+					buffer[i++] = c;
+				}
+			}
+		}
+		else
+		{
+			last_key_space = 0;
+			if (c == '\r' || c == '\n') // 'enter' pressed
+			{
+				ready = 1;
+				buffer[i++] = '\0';
+				printf("\r\n");
+			}
+			else if (c == '\t') // 'tab' pressed
+			{
+				clearline();
+				if (history_match_len == 0 && history_last_index == -1) // first time hitting 'tab'
+				{
+					history_match_len = i;
+					
+					int j, history_found = 0;
+					for (j = 0; j < history_num_match; j++)
+					{
+						// iterate through history and find next 'match'
+						if (strncmp(buffer, history[j], history_match_len) == 0)
+						{
+							// match
+							if (j > history_last_index)
+							{
+								history_last_index = j;
+								strcpy(buffer, history[j]);
+								i = strlen(history[j]);
+								printf("\r%s%s", prompt, history[j]);
+								history_found = 1;
+								break;
+							}
+						}
+					}
+					if (history_found == 0)
+					{
+						printf("%s", " (no match)");
+					}
+				}
+				else
+				{
+					// rewrite prompt+buffer
+					printf("\r%s%s", prompt, buffer);
+				}
+			}
+			else if (c == 65) // up arrow
+			{
+				if (history_match_len == 0)
+				{
+					// tab not yet hit
+				}
+				else
+				{
+					clearline();
+					int j, history_found = 0;
+					for (j = history_last_index - 1; j > 0; j--)
+					{
+						// iterate through history and find next 'match'
+						if (strncmp(buffer, history[j], history_match_len) == 0)
+						{
+							// match
+							history_last_index = j;
+							strcpy(buffer, history[j]);
+							i = strlen(history[j]);
+							printf("\r%s%s", prompt, history[j]);
+							history_found = 1;
+							break;
+						}
+					}
+					if (history_found == 0)
+					{
+						printf("\r%s%s", prompt, buffer);
+					}
+				}
+			}
+			else if (c == 66) // down arrow
+			{
+				if (history_match_len == 0)
+				{
+					// tab not yet hit
+				}
+				else
+				{
+					clearline();
+					int j, history_found = 0;
+					for (j = 0; j < history_num_match; j++)
+					{
+						// iterate through history and find next 'match'
+						if (strncmp(buffer, history[j], history_match_len) == 0)
+						{
+							// match
+							if (j > history_last_index)
+							{
+								history_last_index = j;
+								strcpy(buffer, history[j]);
+								i = strlen(history[j]);
+								printf("\r%s%s", prompt, history[j]);
+								history_found = 1;
+								break;
+							}
+						}
+					}
+					if (history_found == 0)
+					{
+						printf("\r%s%s", prompt, buffer);
+					}
+				}
+			}
+			/*
+			else if (c == '.') // emergency exit (temporary)
+			{
+				system("/bin/stty cooked"); // enable input buffers
+				printf("\r\n");
+				exit(1);
+			}
+			*/
+			else if (c == '\b' || c == 8 || c == 127) // 'backspace' (8) or 'delete' (127)
+			{
+				if (i > 0)
+				{
+					/*
+					clearline();
+					printf("\r%s%s", prompt, buffer);
+					*/
+					if (ISMINIX == 1)
+					{
+						printf("\b \b"); // replace char with a space (for minix)
+					}
+					else
+					{
+						printf(" \b"); // for ubuntu, etc.
+					}
+					i--;
+				}
+				else
+				{
+					printf(" ");
+				}
+			}
+			else if (c == 26 || c == 24 || c == 3 || c == 4) // ctrl + (26=z, 24=x, 3=c, 4=d)
+			{
+				printf("\r\nkeyboard interrupt!\n");
 				
-				int j, history_found = 0;
-				for (j = 0; j < history_num_match; j++)
+				system("/bin/stty cooked"); // enable input buffers
+				printf("\r\n");
+				exit(1);
+			}
+			/*
+			else if (c == 27)
+			{
+				k27 = 1;
+				k91 = 0;
+				printf("%s", "<k27>");
+			}
+			else if (k27 == 1 && c == 91)
+			{
+				k27 = 0;
+				k91 = 1;
+				printf("%s", "<k91>");
+			}
+			else if (k91 == 1 && c == 65)
+			{c = getchar();
+				// emulate down
+				k91 = 0;
+				printf("%c%c%c", 27, 91, 66);
+				printf("%s", "<down>");
+			}
+			else if (k91 == 1 && c == 66)
+			{c = getchar();
+				// emulate up
+				k91 = 0;
+				printf("%c%c%c", 27, 91, 65);
+				printf("%s", "<up>");
+			}
+			else if (c < 32) // esc=27? (happens on down/up), 26 handled above
+			{
+				// ignore
+			}
+			*/
+			else {
+				// for windows, don't print %c.
+				if (ISMINIX == 1)
 				{
-					// iterate through history and find next 'match'
-					if (strncmp(buffer, history[j], history_match_len) == 0)
-					{
-						// match
-						if (j > history_last_index)
-						{
-							history_last_index = j;
-							strcpy(buffer, history[j]);
-							i = strlen(history[j]);
-							printf("\r%s%s", prompt, history[j]);
-							history_found = 1;
-							break;
-						}
-					}
+					printf("%c", c); // %c for minix
 				}
-				if (history_found == 0)
+				else
 				{
-					printf("%s", " (no match)");
+					// no char output for ubuntu
 				}
-			}
-			else
-			{
-				// rewrite prompt+buffer
-				printf("\r%s%s", prompt, buffer);
-			}
-		}
-		else if (c == 65) // up arrow
-		{
-			if (history_match_len == 0)
-			{
-				// tab not yet hit
-			}
-			else
-			{
-				clearline();
-				int j, history_found = 0;
-				for (j = history_last_index - 1; j > 0; j--)
-				{
-					// iterate through history and find next 'match'
-					if (strncmp(buffer, history[j], history_match_len) == 0)
-					{
-						// match
-						history_last_index = j;
-						strcpy(buffer, history[j]);
-						i = strlen(history[j]);
-						printf("\r%s%s", prompt, history[j]);
-						history_found = 1;
-						break;
-					}
-				}
-				if (history_found == 0)
-				{
-					printf("\r%s%s%s", prompt, buffer, " (no more history - top)");
-				}
-			}
-		}
-		else if (c == 66) // down arrow
-		{
-			if (history_match_len == 0)
-			{
-				// tab not yet hit
-			}
-			else
-			{
-				clearline();
-				int j, history_found = 0;
-				for (j = 0; j < history_num_match; j++)
-				{
-					// iterate through history and find next 'match'
-					if (strncmp(buffer, history[j], history_match_len) == 0)
-					{
-						// match
-						if (j > history_last_index)
-						{
-							history_last_index = j;
-							strcpy(buffer, history[j]);
-							i = strlen(history[j]);
-							printf("\r%s%s", prompt, history[j]);
-							history_found = 1;
-							break;
-						}
-					}
-				}
-				if (history_found == 0)
-				{
-					printf("\r%s%s%s", prompt, buffer, " (no more history - bottom)");
-				}
-			}
-		}
-		/*
-		else if (c == '.') // emergency exit (temporary)
-		{
-			system("/bin/stty cooked"); // enable input buffers
-			printf("\r\n");
-			exit(1);
-		}
-		*/
-		else if (c == '\b' || c == 8 || c == 127) // 'backspace' (8) or 'delete' (127)
-		{
-			if (i > 0)
-			{
-				printf("\b \b"); // replace char with a space (for minix)
-				//printf(" \b"); // for ubuntu, etc.
-				i--;
-			}
-			else
-			{
-				printf(" ");
-			}
-		}
-		else if (c == 26 || c == 24 || c == 3 || c == 4) // ctrl + (26=z, 24=x, 3=c, 4=d)
-		{
-			printf("\r\nkeyboard interrupt!\n");
-			
-			system("/bin/stty cooked"); // enable input buffers
-			printf("\r\n");
-			exit(1);
-		}
-		/*
-		else if (c == 27)
-		{
-			k27 = 1;
-			k91 = 0;
-			printf("%s", "<k27>");
-		}
-		else if (k27 == 1 && c == 91)
-		{
-			k27 = 0;
-			k91 = 1;
-			printf("%s", "<k91>");
-		}
-		else if (k91 == 1 && c == 65)
-		{c = getchar();
-			// emulate down
-			k91 = 0;
-			printf("%c%c%c", 27, 91, 66);
-			printf("%s", "<down>");
-		}
-		else if (k91 == 1 && c == 66)
-		{c = getchar();
-			// emulate up
-			k91 = 0;
-			printf("%c%c%c", 27, 91, 65);
-			printf("%s", "<up>");
-		}
-		else if (c < 32) // esc=27? (happens on down/up), 26 handled above
-		{
-			// ignore
-		}
-		*/
-		else {
-			// for windows, don't print %c.
-			printf("%c", c); // %c for minix
-			// no char output for ubuntu
-			//printf("\b[%d]", c); // debugging keycodes
-			
-			buffer[i++] = c;
+				//printf("\b[%d]", c); // debugging keycodes
+				
+				buffer[i++] = c;
+			}	
 		}
 	}
 	system("/bin/stty cooked"); // enable input buffers
@@ -245,6 +333,12 @@ int parseline()
 		add_history(history, history_num_match, buf2);
 	}
 	
+	// free history
+	for (i = 0; i < history_num_match; i++)
+	{
+		free(history[i]);
+	}
+	
 	return 1;
 }
 
@@ -253,24 +347,39 @@ int shell_process(char *buffer)
 	int p_count = verify_parenthesis_count(buffer);
 	if (!p_count) return 0;
 	
-	char prefix[MAXARGS];
-	
-	resetGlobal();
-	infixtoprefix(buffer,prefix);
-	reverse(prefix);
-	//puts(prefix);
-	
-	makeAllCmds(prefix);
-
-	char *s = prefix;
-	Tree *tree = makeTree(&s);
-	if (tree == NULL)
+	if (!strncmp(buffer, "cd", 2))
 	{
-		perror("Invalid input.");
-		return 0;
+		if (isDirectory(buffer + 3))
+		{
+			printf("Change directory: '%s'.\n", buffer + 3);
+			chdir(buffer + 3);
+		}
+		else
+		{
+			printf("Unable to change directory, '%s' is not a directory.\n", buffer + 3);
+		}
 	}
-	traverse(tree);
-	release(tree);
+	else
+	{
+		char prefix[MAXARGS];
+	
+		resetGlobal();
+		infixToPrefix(buffer,prefix);
+		reverse(prefix);
+		//puts(prefix);
+		
+		makeAllCmds(prefix);
+
+		char *s = prefix;
+		Tree *tree = makeTree(&s);
+		if (tree == NULL)
+		{
+			perror("Invalid input.");
+			return 0;
+		}
+		traverse(tree);
+		release(tree);
+	}
 	
 	return 1;
 }

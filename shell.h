@@ -11,6 +11,7 @@
 #define CMD_PART_ARGV 2
 #define MAXLINE       1024
 #define MAXHISTORY    64
+#define ISMINIX       1
 
 int parseline();
 int shell_process(char *arg);

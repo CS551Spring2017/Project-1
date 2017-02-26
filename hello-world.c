@@ -7,6 +7,11 @@
  *   Sufyan Menk
  */
 
-extern int enableAlarm;
-int loadProfile();
-int isDirectory(const char *path);
+#include <stdio.h>
+#include <stdlib.h>
+
+int main()
+{
+	printf("Hello, world!\n");
+	return 1;
+}

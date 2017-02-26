@@ -13,11 +13,10 @@
 #include <ctype.h>
 #include <sys/wait.h>
 #include <unistd.h>
-#include "parse-tree.h"
-
 #include <sys/types.h>
 #include <signal.h>
-#include <errno.h>
+#include "parse-tree.h"
+#include "profile.h"
 
 //Global Vars
 
@@ -41,6 +40,7 @@ struct node {
 
 typedef struct node Tree;
 
+
 //main Asks for infix expression -> builds prefix array -> builds prefix parse tree
 /*
 (ls -l;ps -l)&(man&htop)
@@ -55,7 +55,7 @@ int main() {
 	printf("Enter infix operation: ");
 	gets(infix);
 	
-	infixtoprefix(infix,prefix);
+	infixToPrefix(infix,prefix);
 	reverse(prefix);
 	puts(prefix);
 	
@@ -93,16 +93,21 @@ char *getToken(char **p)
 		return NULL;
 	}
 	
-	if (*ret == '-')
+	while (*ret == '*')
 	{
 		//printf("found arg\n");
+		//printf("%s\n", ret);
 		while (**p && !isspace(**p))
 		{
 			++*p;
 		}
 		++*p;
 		ret = *p;
-		//printf("%s\n", ret);
+	}
+	
+	if (*ret == '*')
+	{
+		
 	}
 	else
 	{
@@ -114,11 +119,10 @@ char *getToken(char **p)
 
 	if (!**p)
 	{
-		
 		**p = 0;
-		++*p;
-		
+		++*p;	
 	}
+	
 	return ret;
 }
 
@@ -178,12 +182,13 @@ void printInfix(Tree *tree)
 		{
 			if (tree->cmd.argv[1] == NULL)
 			{
-				printf("%s", tree->cmd.argv[0]);
+				printf("%s ", tree->cmd.argv[0]);
 			}
 			else
 			{
 				int k = 1;
-				printf("%s", tree->cmd.argv[0]);
+				printf("%s ", tree->cmd.argv[0]);
+				//printf("Args:");
 				while (tree->cmd.argv[k])
 				{
 					printf("%s ",tree->cmd.argv[k]);
@@ -204,9 +209,10 @@ void makeAllCmds(char *prefix)
 	{
 		if (isOperatorString(token) == 0)
 		{
-			if (token[0] == '-')
+			if (token[0] == '*')
 			{
 				++arg;
+				token++;
 				all_cmds[prevCmd].argv[arg] = token;
 			}
 			else
@@ -222,7 +228,7 @@ void makeAllCmds(char *prefix)
 	}
 }
 
-void infixtoprefix(char infix[MAXARGS], char prefix[MAXARGS])
+void infixToPrefix(char infix[MAXARGS], char prefix[MAXARGS])
 {
 	int i,j=0;
 	char symbol;
@@ -242,6 +248,18 @@ void infixtoprefix(char infix[MAXARGS], char prefix[MAXARGS])
 				{
 					prefix[j] = ' ';
 					j++;
+				}
+				if (i+2 != strlen(infix))
+				{
+					char temp2 = infix[i+2];
+					if (!isOperator(temp2))
+					{
+						if (temp == ' ')
+						{
+							prefix[j] = '*';
+							j++;
+						}
+					}
 				}
 			}
 		}
@@ -525,30 +543,95 @@ void traverse(Tree *tree)
 
 void spawnMonitor(pid_t pid)
 {
-	pid_t monitor = fork();
-	if(monitor == 0)
-	{
-		sleep(2);
-		int ret = kill(pid, 0);
-		if(ret == 0)
-		{
+    if (enableAlarm)
+    {
+		int time = sleep(5);
+		if (time == 0)
 			terminatePrompt(pid);
-		}
-		exit(0);
-	}
-	//exit(0);
+    }
+}
+
+/*
+void spawnMonitor(pid_t pid)
+{
+    if (enableAlarm)
+    {
+		int status;
+        pid_t monitor = fork();
+        if (monitor == 0)
+        {
+			pid_t monitor_monitor = fork();
+			if (monitor_monitor)
+			{
+				sleep(6);
+				while (kill(pid, 0) == 0);
+				if (kill(monitor_monitor, 0) == 0)
+				{
+					kill(monitor_monitor, SIGKILL);
+					//printf("Killed rogue monitor");
+				}
+			}
+			else {
+				sleep(5);
+				int ret = kill(pid, 0);
+				if(ret == 0)
+				{
+					pid_t prompt = fork();
+					if(prompt == 0)
+					{
+						terminatePrompt(pid);
+						exit(0);
+					}
+					waitpid(prompt, &status, 0);
+				}
+			}
+            exit(0);
+        }
+    }
 }
 
 void terminatePrompt(pid_t pid)
 {
 	char answer = ' ';
-	printf("Terminate process: %d?(Y/N)", pid);fflush(stdout);
-	while(answer !='Y' && answer!='y' && answer !='N' && answer !='n') {
-		answer=getc(stdin);
+	printf("Terminate process: %d? (Y/N)", pid);
+	fflush(stdout);
+	
+	while (answer != 'Y' && answer != 'y' && answer != 'N' && answer != 'n')
+	{
+		answer = getc(stdin);
 	}
 	getchar(); //avoid the case when the next command will be '\r'
-	if(answer=='Y' || answer =='y') {
+	
+	answer = getchar();
+	if (answer == 'Y' || answer == 'y')
+	{
 		kill(pid, SIGKILL);
 		printf("Terminated process: %d.\n", pid);
+	}
+}
+
+void terminatePrompt(pid_t pid)
+{
+	char answer = ' ';
+	printf("Terminate process: %d? (Y/N)", pid);
+	scanf("%c", &answer);
+	if(answer == 'y' || answer == 'Y')
+	{
+		kill(pid, SIGKILL);
+		printf("Terminated process: %d.\n", pid);
+	}
+}
+*/
+void terminatePrompt(pid_t pid)
+{
+	char choice = ' ';
+	printf("Terminate ?(Y/N)");fflush(stdout);
+	while(choice !='Y' && choice!='y' && choice !='N' && choice !='n') {
+		choice=getc(stdin);
+	}
+	getchar(); //avoid the case when the next command will be '\r'
+	if(choice=='Y' || choice =='y') {
+		kill(pid, SIGKILL);
+		printf("Terminated.\n");
 	}
 }

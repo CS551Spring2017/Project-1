@@ -14,7 +14,7 @@ typedef struct node Tree;
 
 //Infix to Prefix functions
 
-void infixtoprefix(char infix[MAXARGS],char prefix[MAXARGS]);
+void infixToPrefix(char infix[MAXARGS], char prefix[MAXARGS]);
 void reverse(char array[MAXARGS]);
 char pop();
 void push(char symbol);
@@ -32,6 +32,7 @@ void release(Tree *tree);
 void printInfix(Tree *tree);
 
 void traverse(Tree *tree);
-void terminatePrompt(pid_t pid);
 void spawnMonitor(pid_t pid);
+void terminatePrompt(pid_t pid);
+
 void resetGlobal();
