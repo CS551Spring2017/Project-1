@@ -165,7 +165,7 @@ int parseline()
 			}
 			else if (c == 65) // up arrow
 			{
-				if (history_match_len == 0)
+				if (history_match_len == 0 && history_last_index == -1)
 				{
 					// tab not yet hit
 				}
@@ -196,7 +196,7 @@ int parseline()
 			}
 			else if (c == 66) // down arrow
 			{
-				if (history_match_len == 0)
+				if (history_match_len == 0 && history_last_index == -1)
 				{
 					// tab not yet hit
 				}
