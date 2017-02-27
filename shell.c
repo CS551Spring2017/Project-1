@@ -33,8 +33,8 @@ int main()
 	}
 	*/
 	
-	enableAlarm = loadProfile();
 	setHistoryFilePath();
+	enableAlarm = loadProfile();
 	
 	while (!done)
 	{
@@ -65,7 +65,7 @@ int parseline()
 	int history_match_len = 0;			// how long the original buffer was when 'tab' was hit
 	int history_last_index = -1;		// last history index
 	int k27 = 0;
-	int k91 = 0;
+	//int k91 = 0;
 	int last_key_space = 0;				// prevent double spaces
 	//int last_key_91 = 0;				// up/down fix
 	
@@ -285,14 +285,14 @@ int parseline()
 			else if (c == 27)
 			{
 				k27 = 1;
-				k91 = 0;
+				//k91 = 0;
 				printf("%c", c);
 				//printf("%s", "<k27>");
 			}
 			else if (k27 == 1 && c == 91)
 			{
 				k27 = 0;
-				k91 = 1;
+				//k91 = 1;
 				printf("\b"); // this is the prelude to up/down arrow
 				//printf("%s", "<k91>");
 			}
@@ -370,7 +370,11 @@ int shell_process(char *buffer)
 	
 	if (!strncmp(buffer, "cd", 2))
 	{
-		if (isDirectory(buffer + 3))
+		if (strlen(buffer) < 4)
+		{
+			printf("Unable to change directory, no directory entered.\n");
+		}
+		else if (isDirectory(buffer + 3))
 		{
 			printf("Change directory: '%s'.\n", buffer + 3);
 			chdir(buffer + 3);

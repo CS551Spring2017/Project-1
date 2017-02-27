@@ -35,7 +35,17 @@ int loadProfile()
 		printf("Line read was: '%s'", buffer);
 		return 1;
 	}
-	buffer[strlen(buffer) - 1] = '\0'; // remove \n
+	if (buffer[strlen(buffer) - 1] == '\n') // remove \n
+	{
+		if (buffer[strlen(buffer) - 2] == '\r')
+		{
+			buffer[strlen(buffer) - 2] = '\0';
+		}
+		else
+		{
+			buffer[strlen(buffer) - 1] = '\0';
+		}
+	}
 	/*
 	if (!isDirectory(buffer + 5))
 	{
@@ -53,7 +63,17 @@ int loadProfile()
 		printf("Line read was: '%s'", buffer);
 		return 1;
 	}
-	buffer[strlen(buffer) - 1] = '\0'; // remove \n
+	if (buffer[strlen(buffer) - 1] == '\n') // remove \n
+	{
+		if (buffer[strlen(buffer) - 2] == '\r')
+		{
+			buffer[strlen(buffer) - 2] = '\0';
+		}
+		else
+		{
+			buffer[strlen(buffer) - 1] = '\0';
+		}
+	}
 	if (!isDirectory(buffer + 5))
 	{
 		perror("Invalid PROFILE file. (Invalid HOME)");
