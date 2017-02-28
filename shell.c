@@ -45,6 +45,8 @@ int main()
 		parseline();
 		int i;
 		int status;
+		sleep(1);
+		printf("pid_index: %d", pid_index);
 		for(i = 0; i < pid_index; i++)
 		{
 			waitpid(concurrentpids[i], &status, 0);

@@ -420,8 +420,8 @@ void traverse(Tree *tree)
 		if (isOperatorString(tree->right->op)) //Is the RIGHTside a command?
 		{
 			pid_t childshell = fork(); //Make a new shell
-			concurrentpids[pid_index] = childshell;
-			pid_index++;
+			concurrentpids[pid_index++] = childshell;
+			printf("childshell index\n");
 			if (childshell == 0)
 			{
 				traverse(tree->right);
@@ -431,8 +431,8 @@ void traverse(Tree *tree)
 		else //Rightside IS a command
 		{
 			pid_t cmd = fork();
-			concurrentpids[pid_index] = cmd;
-			pid_index++;
+			concurrentpids[pid_index++] = cmd;
+			printf("cmd index\n");
 			if (cmd == 0)
 			{
 				execvp(tree->right->cmd.argv[0],tree->right->cmd.argv);
@@ -447,8 +447,8 @@ void traverse(Tree *tree)
 		if (isOperatorString(tree->left->op)) //Is the LEFTside a command?
 		{
 			pid_t childshell = fork(); //Make a new shell
-			concurrentpids[pid_index] = childshell;
-			pid_index++;
+			concurrentpids[pid_index++] = childshell;
+			printf("childshell index\n");
 			if (childshell == 0)
 			{
 				traverse(tree->left);
@@ -458,8 +458,8 @@ void traverse(Tree *tree)
 		else //Leftside IS a command
 		{
 			pid_t cmd = fork();
-			concurrentpids[pid_index] = cmd;
-			pid_index++;
+			concurrentpids[pid_index++] = cmd;
+			printf("cmd index\n");
 			if (cmd == 0)
 			{
 				execvp(tree->left->cmd.argv[0],tree->left->cmd.argv);
