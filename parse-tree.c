@@ -23,7 +23,6 @@ void makeAllCmds(char * prefix);
 int top=-1;
 int globalCounter = 0;
 char stack[MAX];
-int pointerCheck = 0;
 
 typedef struct{
 	char *argv[MAXARGS];
