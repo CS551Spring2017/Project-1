@@ -411,6 +411,23 @@ int shell_process(char *buffer)
 			printf("Unable to change directory, '%s' is not a directory.\n", buffer + 3);
 		}
 	}
+	else if (!strncmp(buffer, "alarm", 5))
+	{
+		if (buffer[6] == '0')
+		{
+			enableAlarm = 0;
+			printf("Alarm disabled.\n");
+		}
+		else if (buffer[6] == '1')
+		{
+			enableAlarm = 1;
+			printf("Alarm enabled.\n");
+		}
+		else
+		{
+			printf("To set alarm: type alarm 0 = off or alarm 1 = on.\n");
+		}
+	}
 	else
 	{
 		//printf("Input: [%s]\n", buffer);

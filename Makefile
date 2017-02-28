@@ -1,6 +1,6 @@
 OBJS = profile.c history.c parse-tree.c shell.c
 TESTOBJS_OUT = hello-world repeater sleeper
-CC = gcc
+CC = clang
 DEBUG = 
 FLAGS = -Wall $(DEBUG)
 
