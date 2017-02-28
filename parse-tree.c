@@ -422,8 +422,8 @@ void traverse(Tree *tree)
 		if (isOperatorString(tree->right->op)) //Is the RIGHTside a command?
 		{
 			pid_t childshell = fork(); //Make a new shell
-			//concurrentpids[pid_index] = childshell;
-			//pid_index++;
+			concurrentpids[pid_index] = childshell;
+			pid_index++;
 			if (childshell == 0)
 			{
 				traverse(tree->right);
@@ -449,8 +449,8 @@ void traverse(Tree *tree)
 		if (isOperatorString(tree->left->op)) //Is the LEFTside a command?
 		{
 			pid_t childshell = fork(); //Make a new shell
-			//concurrentpids[pid_index] = childshell;
-			//pid_index++;
+			concurrentpids[pid_index] = childshell;
+			pid_index++;
 			if (childshell == 0)
 			{
 				traverse(tree->left);
