@@ -38,6 +38,11 @@ int main()
 	
 	setHistoryFilePath();
 	enableAlarm = loadProfile();
+	int i;
+	for(i = 0;i<100;i++)
+	{
+		concurrentpids[i] = -1;
+	}
 	
 	while (!done)
 	{
@@ -45,11 +50,20 @@ int main()
 		parseline();
 		int i;
 		int status;
-		sleep(1);
-		printf("pid_index: %d", pid_index);
-		for(i = 0; i < pid_index; i++)
+		//printf("pid_index: %d\n", pid_index);
+		for(i = 0; i < 100; i++)
 		{
+			if(concurrentpids[i] == -1)
+			{
+				break;
+			}
+			//printf("concurrentpids[%d]: %d waiting\n",i,concurrentpids[i]);
 			waitpid(concurrentpids[i], &status, 0);
+			//printf("concurrentpids[%d]: %d reaped\n",i,concurrentpids[i]);
+		}
+		for(i = 0;i<100;i++)
+		{
+			concurrentpids[i] = -1;
 		}
 		pid_index = 0;
 	}
@@ -367,10 +381,11 @@ int parseline()
 	}
 	
 	// free history
-	for (i = 0; i < history_num_match; i++)
+	/*for (i = 0; i < history_num_match; i++)
 	{
 		free(history[i]);
-	}
+	}*/
+	//free(history);
 	
 	return 1;
 }
@@ -398,7 +413,7 @@ int shell_process(char *buffer)
 	}
 	else
 	{
-		printf("Input: [%s]\n", buffer);
+		//printf("Input: [%s]\n", buffer);
 		char prefix[MAXARGS];
 	
 		resetGlobal();
@@ -416,7 +431,7 @@ int shell_process(char *buffer)
 			return 0;
 		}
 		traverse(tree);
-		release(tree);
+		//release(tree);
 	}
 	
 	return 1;

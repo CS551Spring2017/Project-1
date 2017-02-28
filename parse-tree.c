@@ -414,52 +414,27 @@ void traverse(Tree *tree)
 		printf("Invalid input\n");
 		exit(1);
 	}
+	//printf("In traverse\n");
 	//CODE FOR PARALLEL
 	if (!strcmp(tree->op, "&")) //Is the root operator &?
 	{
-		if (isOperatorString(tree->right->op)) //Is the RIGHTside a command?
-		{
-			pid_t childshell = fork(); //Make a new shell
-			concurrentpids[pid_index++] = childshell;
-			printf("childshell index\n");
-			if (childshell == 0)
-			{
-				traverse(tree->right);
-				exit(0);
-			}
-		}
-		else //Rightside IS a command
-		{
-			pid_t cmd = fork();
-			concurrentpids[pid_index++] = cmd;
-			printf("cmd index\n");
-			if (cmd == 0)
-			{
-				execvp(tree->right->cmd.argv[0],tree->right->cmd.argv);
-				printf("%s: command not found\n", tree->right->cmd.argv[0]);
-				exit(1);
-			}
-			else
-			{
-				spawnMonitor(cmd);
-			}
-		}
 		if (isOperatorString(tree->left->op)) //Is the LEFTside a command?
 		{
 			pid_t childshell = fork(); //Make a new shell
-			concurrentpids[pid_index++] = childshell;
-			printf("childshell index\n");
 			if (childshell == 0)
 			{
 				traverse(tree->left);
 				exit(0);
 			}
+			else
+			{
+				concurrentpids[pid_index++] = childshell;
+				//printf("childshell index\n");
+			}
 		}
 		else //Leftside IS a command
 		{
 			pid_t cmd = fork();
-			concurrentpids[pid_index++] = cmd;
-			printf("cmd index\n");
 			if (cmd == 0)
 			{
 				execvp(tree->left->cmd.argv[0],tree->left->cmd.argv);
@@ -468,6 +443,38 @@ void traverse(Tree *tree)
 			}
 			else
 			{
+				concurrentpids[pid_index++] = cmd;
+				//printf("cmd index\n");
+				spawnMonitor(cmd);
+			}
+		}
+		if (isOperatorString(tree->right->op)) //Is the RIGHTside a command?
+		{
+			pid_t childshell = fork(); //Make a new shell
+			if (childshell == 0)
+			{
+				traverse(tree->right);
+				exit(0);
+			}
+			else
+			{
+				concurrentpids[pid_index++] = childshell;
+				//printf("childshell index\n");
+			}
+		}
+		else //Rightside IS a command
+		{
+			pid_t cmd = fork();
+			if (cmd == 0)
+			{
+				execvp(tree->right->cmd.argv[0],tree->right->cmd.argv);
+				printf("%s: command not found\n", tree->right->cmd.argv[0]);
+				exit(1);
+			}
+			else
+			{
+				concurrentpids[pid_index++] = cmd;
+				//printf("cmd index\n");
 				spawnMonitor(cmd);
 			}
 		}
