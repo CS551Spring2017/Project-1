@@ -20,6 +20,9 @@
 static char *prompt = "shell> ";
 static char done = 0;
 
+extern pid_t *concurrentpids[100];
+extern int pid_index;
+
 int main()
 {
 	/*
@@ -40,6 +43,12 @@ int main()
 	{
 		printf("%s", prompt);
 		parseline();
+		int i;
+		int status;
+		for(i = 0; i < pid_index; i++)
+		{
+			waitpid(concurrentpids[i], &status, 0);
+		}
 	}
 	
 	return 0;

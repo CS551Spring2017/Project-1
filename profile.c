@@ -20,7 +20,7 @@ int enableAlarm = 1;
 int loadProfile()
 {
 	FILE *profile;
-    char *buffer;
+    char *buffer = NULL;
     size_t bufsize = 0;
     profile = fopen("PROFILE", "r");
     if (profile == NULL)

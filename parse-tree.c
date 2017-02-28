@@ -24,6 +24,8 @@ int top = -1;
 int globalCounter = 0;
 char stack[MAX];
 int pointerCheck = 0;
+pid_t *concurrentpids[100];
+int pid_index = 0;
 
 typedef struct {
 	char *argv[MAXARGS];
@@ -420,6 +422,8 @@ void traverse(Tree *tree)
 		if (isOperatorString(tree->right->op)) //Is the RIGHTside a command?
 		{
 			pid_t childshell = fork(); //Make a new shell
+			//concurrentpids[pid_index] = childshell;
+			//pid_index++;
 			if (childshell == 0)
 			{
 				traverse(tree->right);
@@ -429,6 +433,8 @@ void traverse(Tree *tree)
 		else //Rightside IS a command
 		{
 			pid_t cmd = fork();
+			concurrentpids[pid_index] = cmd;
+			pid_index++;
 			if (cmd == 0)
 			{
 				execvp(tree->right->cmd.argv[0],tree->right->cmd.argv);
@@ -443,6 +449,8 @@ void traverse(Tree *tree)
 		if (isOperatorString(tree->left->op)) //Is the LEFTside a command?
 		{
 			pid_t childshell = fork(); //Make a new shell
+			//concurrentpids[pid_index] = childshell;
+			//pid_index++;
 			if (childshell == 0)
 			{
 				traverse(tree->left);
@@ -452,6 +460,8 @@ void traverse(Tree *tree)
 		else //Leftside IS a command
 		{
 			pid_t cmd = fork();
+			concurrentpids[pid_index] = cmd;
+			pid_index++;
 			if (cmd == 0)
 			{
 				execvp(tree->left->cmd.argv[0],tree->left->cmd.argv);
