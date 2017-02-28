@@ -134,13 +134,11 @@ Tree *makeTree(char **p)
 	if (token)
 	{
 		Tree *tree = malloc(sizeof(*tree));
-		cmd_struct temp;
 		switch (*token)
 		{
 			case ';':
 			case '&':
 				tree->op = token;
-				tree->cmd = temp;
 				tree->left = makeTree(p);
 				tree->right = makeTree(p);
 				break;
