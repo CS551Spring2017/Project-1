@@ -49,6 +49,7 @@ int main()
 		{
 			waitpid(concurrentpids[i], &status, 0);
 		}
+		pid_index = 0;
 	}
 	
 	return 0;
