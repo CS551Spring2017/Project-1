@@ -557,7 +557,7 @@ void spawnMonitor(pid_t pid)
         pid_t monitor = fork();
         if (monitor == 0)
         {
-			pid_t monitor_monitor = fork();
+			/*pid_t monitor_monitor = fork();
 			if (monitor_monitor)
 			{
 				sleep(6);
@@ -568,14 +568,14 @@ void spawnMonitor(pid_t pid)
 					//printf("Killed rogue monitor");
 				}
 			}
-			else {
+			else {*/
 				sleep(5);
 				int ret = kill(pid, 0);
 				if(ret == 0)
 				{
 					terminatePrompt(pid);
 				}
-			}
+			//}
             exit(0);
         }
     }
