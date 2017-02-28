@@ -24,7 +24,7 @@ int top = -1;
 int globalCounter = 0;
 char stack[MAX];
 int pointerCheck = 0;
-pid_t *concurrentpids[100];
+pid_t concurrentpids[100];
 int pid_index = 0;
 
 typedef struct {

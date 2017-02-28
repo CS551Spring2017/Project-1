@@ -20,7 +20,7 @@
 static char *prompt = "shell> ";
 static char done = 0;
 
-extern pid_t *concurrentpids[100];
+extern pid_t concurrentpids[100];
 extern int pid_index;
 
 int main()
